@@ -2,13 +2,22 @@ package display;
 
 
 
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.aggregates.StatisticsSummary;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.swtchart.Chart;
+import org.swtchart.ILineSeries;
+import org.swtchart.ISeries.SeriesType;
+
+
 
 public class BarSeries {
 	
@@ -26,16 +35,57 @@ public class BarSeries {
 	public static double[] series;
 	public static int printLength=0;
 	public static int valuesTransmitted=0;
+	public static Composite composite;
+	
+	
+	
+	public static void DisplayValues (double[] modes, String[] mathValues){
+		
+		if (mathValues.length==1){
+			//only display mode(s)
+		}
+		if(mathValues.length==4){
+			//display mode(s), median, minimum and maximum
+		}
+		if(mathValues.length==9){
+			//display mode(s), median, minimum, maximum, arithmetic mean, varianca, 
+			//population variance, range and kurtosis
+		}
+		if(mathValues.length==10){
+			//display mode(s), median, minimum, maximum, arithmetic mean, varianca, 
+			//population variance, range, kurtosis and geometric mean
+		}
+		
+				
+			}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public static void Choices (Display display, double[] mathValues){
+		shell=new Shell(display);
+
+		
 		
 		shell=new Shell(display);
 		shell.setText("Choose the values you want to display");
-		
-		initUI(mathValues, display);
-		
 		shell.setSize(500, 500);
+		Chart chart=new Chart(shell, SWT.NONE);
 		
+	
+		initUI(mathValues, display);
+		chart.dispose();
 		shell.open();
 		
 		while (!shell.isDisposed()) {
@@ -44,10 +94,11 @@ public class BarSeries {
 	          }
 	        }
 		
+	
+	
 	}
-	
-	
 	public static void initUI(final double[] mV, final Display display){
+		
 		
 		checkButton1=new Button(shell,SWT.CHECK);
 		checkButton1.setText("Arithmetic Mean");
@@ -173,7 +224,9 @@ public class BarSeries {
 		Button exitButton = new Button(shell, SWT.PUSH);
         exitButton.setText("Cancel");
         exitButton.setLayoutData(new RowData(80, 30));
+        
 	}
+	
 	public static void Display (Display display, double[] values){
 		
 		shell2=new Shell(display);
