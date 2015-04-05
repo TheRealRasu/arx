@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.*;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.aggregates.StatisticsSummary.ScaleOfMeasure;
+
 
 	/* 
 	 * Mein erster Entwurf für die Berechnung des arithmetischen Mittels von Beispieldaten in ARX.
@@ -20,22 +20,23 @@ import org.deidentifier.arx.aggregates.StatisticsSummary.ScaleOfMeasure;
 	 */
 public class DoingTheMath {
 	
-	public static DataHandle dataHandle;
 	public static int rowAmount;
 	public static int rowAmountWithoutNull;
 	public static int columnAmount;
-	public static String[] header;
 	public static int attLocation;
 	public static DescriptiveStatistics stats;
 	public static ArrayList<String> valueList;
 	public static ArrayList<Integer> modeAmountList;
 	
 	public static int[] valueCounter;
+	public static String[] modes;
 	public static String[] values;
 	public static String[] valuesWithoutNull;
-	public static Integer modeValue;
 	public static boolean[] isNull;
-	public static int j;
+	public static int temp;
+	public static int temp2;
+	public static int temp3;
+	public static int modeCounter;
 	
 	
 	/*
@@ -43,6 +44,8 @@ public class DoingTheMath {
 	 * will be used for the mathematical operations.
 	 * The Method GetAttributeValues() contains a lot of System.out.prinln()-commands which I used to test my methods.
 	 *
+	 * In the end, the method will call the method to display the values and give it a String-array with 
+	 * all the mathematical values, a String-array with all the different modes and the name of the attribute as a String.
 	 */
 	
 	
@@ -125,17 +128,20 @@ public class DoingTheMath {
 	valuesWithoutNull=new String[rowAmountWithoutNull];
 	
 	valueList = new ArrayList<String>();
-	j=0;
+	temp=0;
 	for (int i=0;i<rowAmount;i++){
 		if(!isNull[i]){
-			valuesWithoutNull[j]=dataHandle.getValue(i, attLocation);
-			valueList.add(valuesWithoutNull[j]);
-			if((!scale.equals(ScaleOfMeasure.NOMINAL)) && (!scale.equals(ScaleOfMeasure.NOMINAL) &&(!type.equals(DataType.DATE)))){
-				stats.addValue(Double.parseDouble(valuesWithoutNull[j]));
+			valuesWithoutNull[temp]=dataHandle.getValue(i, attLocation);
+			valueList.add(valuesWithoutNull[temp]);
+			if((!scale.equals(ScaleOfMeasure.NOMINAL)) && (!scale.equals(ScaleOfMeasure.ORDINAL) &&(!type.equals(DataType.DATE)))){
+				stats.addValue(Double.parseDouble(valuesWithoutNull[temp]));
 				
 			}
-			j++;
-			if(j==rowAmountWithoutNull){
+			else if(type.equals(DataType.DATE)){
+				stats.addValue(((Date)type.parse(valuesWithoutNull[temp])).getTime());
+			}
+			temp++;
+			if(temp==rowAmountWithoutNull){
 				break;
 			}
 		}
@@ -161,80 +167,112 @@ public class DoingTheMath {
 	Collections.sort(modeAmountList);
 	Collections.sort(valueList);
 	
-	if(scale.equals(ScaleOfMeasure.NOMINAL)){
-		values=new String[1];
-		values[0]=modeAmountList.get(modeAmountList.size()-1).toString();
-		System.out.println("The attribute's mode is "+values[0]);
-		
-	} else if(scale.equals(ScaleOfMeasure.ORDINAL)){
-		values=new String[4];
-		values[0]=modeAmountList.get(modeAmountList.size()-1).toString();
-		System.out.println("The attribute's mode is "+values[0]);
-		values[1]=valueList.get(valueList.size() /2);
-		values[2]=valueList.get(0);
-		values[3]=valueList.get(valueList.size()-1);
-		System.out.println("The attribute's median is "+values[1]);
-		System.out.println("The attribute's minimum is "+values[2]);
-		System.out.println("The attribute's maximum is "+values[3]);
-	} else if (scale.equals(ScaleOfMeasure.INTERVAL)){
-		
-		values=new String[9];
-		values[0]=modeAmountList.get(modeAmountList.size()-1).toString();
-		System.out.println("The attribute's mode is "+values[0]);
-		values[1]=valueList.get(valueList.size() /2);
-		values[2]=valueList.get(0);
-		values[3]=valueList.get(valueList.size()-1);
-		System.out.println("The attribute's median is "+values[1]);
-		System.out.println("The attribute's minimum is "+values[2]);
-		System.out.println("The attribute's maximum is "+values[3]);
-		values[4]=String.valueOf(stats.getMean());
-		values[5]=String.valueOf(stats.getVariance());
-		values[6]=String.valueOf(stats.getPopulationVariance());
-		values[7]=String.valueOf(((stats.getMax())-(stats.getMin())));
-		values[8]=String.valueOf(stats.getKurtosis());
-		System.out.println("The attribute's mean is "+values[4]);
-		System.out.println("The attribute's variance is "+values[5]);
-		System.out.println("The attribute's population variance is "+values[6]);
-		System.out.println("The attribute's range is "+values[7]);
-		System.out.println("The attribute's kurtosis is "+values[8]);
-		
-	} else if (scale.equals(ScaleOfMeasure.RATIO)){
-		
-		values=new String[10];
-		values[0]=modeAmountList.get(modeAmountList.size()-1).toString();
-		System.out.println("The attribute's mode is "+values[0]);
-		values[1]=valueList.get(valueList.size() /2);
-		values[2]=valueList.get(0);
-		values[3]=valueList.get(valueList.size()-1);
-		System.out.println("The attribute's median is "+values[1]);
-		System.out.println("The attribute's minimum is "+values[2]);
-		System.out.println("The attribute's maximum is "+values[3]);
-		values[4]=String.valueOf(stats.getMean());
-		values[5]=String.valueOf(stats.getVariance());
-		values[6]=String.valueOf(stats.getPopulationVariance());
-		values[7]=String.valueOf(((stats.getMax())-(stats.getMin())));
-		values[8]=String.valueOf(stats.getKurtosis());
-		System.out.println("The attribute's mean is "+values[4]);
-		System.out.println("The attribute's variance is "+values[5]);
-		System.out.println("The attribute's population variance is "+values[6]);
-		System.out.println("The attribute's range is "+values[7]);
-		System.out.println("The attribute's kurtosis is "+values[8]);
-		values[9]=String.valueOf(stats.getGeometricMean());
-		System.out.println("The attribute's geometric mean is "+values[9]);
-		
-		
-	}
-	
-	
-	
-	//TODO: count amounts of modes!
+	computeMathModeValues(scale);
+	//BarSeries.BarSeriesDisplay(modes, values, attribute);
+
+	//TODO: fix data values of mean up until kurtosis!
 	
 }
 	
-	
-	
-	
+	public static void computeMathModeValues(ScaleOfMeasure scale){
+		if(scale.equals(ScaleOfMeasure.NOMINAL)){
+			values=new String[1];
+		}else if(scale.equals(ScaleOfMeasure.ORDINAL)){
+			values=new String[4];
+		} else if(scale.equals(ScaleOfMeasure.INTERVAL)){
+			values=new String[9];
+		} else{
+			values=new String[10];
+		}
+		
+		
+		values[0]=modeAmountList.get(modeAmountList.size()-1).toString();
+			
+
+		modeCounter=0;
+
+		temp2=Integer.parseInt(values[0]);
+		for (int i=0;i<valueCounter.length;i++){
+			if(temp2==valueCounter[i]){
+				modeCounter++;
+			}
+		}
+		modes=new String[modeCounter];
+		
+		
+		if(modeCounter==1){
+			System.out.println("There is one mode.");
+		}
+		else{
+			System.out.println("There are a total of "+modeCounter+" modes.");
+		}
+		
+		
+		temp3=0;
+		for (int i=0;i<valueCounter.length;i++){
+			if(temp2==valueCounter[i]){
+				modes[temp3]=valuesWithoutNull[i];
+				temp3++;
+				
+			}
+		}
+			
+		for(int i=0;i<modes.length;i++){
+			System.out.println(modes[i]);
+		}
+			
+		
+		if(modes.length==1){
+			System.out.println("The mode's value is "+values[0]);
+		} else{
+			System.out.println("The modes' value is "+values[0]);
+		}
+			
+		
+		
+		if (!scale.equals(ScaleOfMeasure.NOMINAL)){
+			
+			
+			values[1]=valueList.get(valueList.size() /2);
+			values[2]=valueList.get(0);
+			values[3]=valueList.get(valueList.size()-1);
+			System.out.println("The attribute's median is "+values[1]);
+			System.out.println("The attribute's minimum is "+values[2]);
+			System.out.println("The attribute's maximum is "+values[3]);
+			
+			
+		
+		if (!scale.equals(ScaleOfMeasure.ORDINAL)){
+			
+			values[4]=String.valueOf(stats.getMean());
+			values[5]=String.valueOf(stats.getVariance());
+			values[6]=String.valueOf(stats.getPopulationVariance());
+			values[7]=String.valueOf(((stats.getMax())-(stats.getMin())));
+			values[8]=String.valueOf(stats.getKurtosis());
+			System.out.println("The attribute's mean is "+values[4]);
+			System.out.println("The attribute's variance is "+values[5]);
+			System.out.println("The attribute's population variance is "+values[6]);
+			System.out.println("The attribute's range is "+values[7]);
+			System.out.println("The attribute's kurtosis is "+values[8]);
+			
+		
+		if (!scale.equals(ScaleOfMeasure.INTERVAL)){
+			
+		
+			values[9]=String.valueOf(stats.getGeometricMean());
+			System.out.println("The attribute's geometric mean is "+values[9]);
+			
+			
+		}
+		
+		
+		
 	}
+	}
+	}
+}
+	
+	
 	
 	
 

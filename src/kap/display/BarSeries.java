@@ -2,20 +2,20 @@ package display;
 
 
 
-import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.aggregates.StatisticsSummary;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.swtchart.Chart;
-import org.swtchart.ILineSeries;
+import org.swtchart.IAxis;
+import org.swtchart.IAxisSet;
+import org.swtchart.IAxisTick;
+import org.swtchart.IBarSeries;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.ISeriesLabel;
+import org.swtchart.Range;
 
 
 
@@ -31,17 +31,113 @@ public class BarSeries {
 	public static Button checkButton6;
 	public static Button checkButton7;
 	public static Button checkButton8;
+	public static Button checkButton9;
+	public static Button checkButton10;
 	public static Button printButton;
-	public static double[] series;
+	public static double[] ySeries;
 	public static int printLength=0;
 	public static int valuesTransmitted=0;
 	public static Composite composite;
 	
 	
-	
-	public static void DisplayValues (double[] modes, String[] mathValues){
+	public static void BarSeriesDisplay (String[] modes, String[] mathValues, String attribute){
+		
+		//will be implemented in this class if tests are completed. The main() class will be removed 
+		//after completing tests.
+		
+		Display display=new Display();
+		Shell shell=new Shell(display);
+		
+		
+		shell.setSize(1000,700);
+		shell.setLayout(new FillLayout());
+		
+
+		Chart chart=new Chart(shell, SWT.NONE);
+		IAxisSet aS= chart.getAxisSet();
+		IAxis xAxis = aS.getXAxis(0);
+		chart.getTitle().setText("Displaying the values of the attribute "+attribute);
+		shell.setText("Klinisches Anwendungsprojekt: Bar series");
+		Composite composite=chart.getPlotArea();
+		composite.setBounds(100, 100, 100, 100);
+
+		IAxisTick xTick=aS.getXAxis(0).getTick();
+		IBarSeries BarSeries = (IBarSeries) chart.getSeriesSet()
+				.createSeries(SeriesType.BAR, attribute);
+		
+		ISeriesLabel barLabel=BarSeries.getLabel();
+		barLabel.setFormat("#####.###");
+		barLabel.setVisible(true);
+		chart.getAxisSet().getXAxis(0).getTitle().setVisible(false);
+		chart.getAxisSet().getYAxis(0).getTitle().setVisible(false);
+		
 		
 		if (mathValues.length==1){
+			
+		xAxis.setCategorySeries(new String[]{"Mode"});
+		xAxis.enableCategory(true);
+		xTick.setVisible(false);
+		chart.getAxisSet().getXAxis(0).getTitle().setText("Mode");
+		chart.getAxisSet().getXAxis(0).getTitle().setVisible(true);
+
+		BarSeries.setBarPadding(50);
+		BarSeries.setYSeries(new double[]{Double.parseDouble(mathValues[0])});
+
+		
+		
+		}
+		if (mathValues.length==4){
+			
+			xAxis.setCategorySeries(new String[] {"Mode","Median", "Min","Max"});
+			xAxis.enableCategory(true);
+			xAxis.setRange(new Range(0,4));
+
+			BarSeries.setBarPadding(10);
+			BarSeries.setYSeries(new double[]{Double.parseDouble(mathValues[0]),
+			Double.parseDouble(mathValues[1]), Double.parseDouble(mathValues[2]), 
+			Double.parseDouble(mathValues[3])});
+		} 
+		if (mathValues.length==9){
+			xAxis.setCategorySeries(new String[] {"Mode","Median", "Min","Max",
+			"Mean","Variance", "Pop. Variance","range", "kurtosis"});
+			xAxis.enableCategory(true);
+			xAxis.setRange(new Range(0,9));
+
+			BarSeries.setBarPadding(10);
+			BarSeries.setYSeries(new double[]{Double.parseDouble(mathValues[0]),
+			Double.parseDouble(mathValues[1]), Double.parseDouble(mathValues[2]), 
+			Double.parseDouble(mathValues[3]),Double.parseDouble(mathValues[4]),
+			Double.parseDouble(mathValues[5]),Double.parseDouble(mathValues[6]),
+			Double.parseDouble(mathValues[7]),Double.parseDouble(mathValues[8])});	
+				
+			}
+		if(mathValues.length==10){
+			xAxis.setCategorySeries(new String[] {"Mode","Median", "Min","Max",
+			"Mean","Variance", "Pop. Variance","range", "kurtosis", "Geometric Mean"});
+			xAxis.enableCategory(true);
+			xAxis.setRange(new Range(0,9));
+
+			BarSeries.setBarPadding(10);
+			BarSeries.setYSeries(new double[]{Double.parseDouble(mathValues[0]),
+			Double.parseDouble(mathValues[1]), Double.parseDouble(mathValues[2]), 
+			Double.parseDouble(mathValues[3]),Double.parseDouble(mathValues[4]),
+			Double.parseDouble(mathValues[5]),Double.parseDouble(mathValues[6]),
+			Double.parseDouble(mathValues[7]),Double.parseDouble(mathValues[8]),
+			Double.parseDouble(mathValues[9])});	
+		}
+		
+		aS.adjustRange();
+		shell.open();
+	    while (!shell.isDisposed()) {
+	      if (!display.readAndDispatch())
+	        display.sleep();
+	    }
+			
+		display.dispose();	
+		//ShowChoices(display, mathValues);
+			
+		/*
+		
 			//only display mode(s)
 		}
 		if(mathValues.length==4){
@@ -56,193 +152,37 @@ public class BarSeries {
 			//population variance, range, kurtosis and geometric mean
 		}
 		
-				
-			}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public static void Choices (Display display, double[] mathValues){
-		shell=new Shell(display);
-
-		
-		
-		shell=new Shell(display);
-		shell.setText("Choose the values you want to display");
-		shell.setSize(500, 500);
-		Chart chart=new Chart(shell, SWT.NONE);
+		*/
 		
 	
-		initUI(mathValues, display);
-		chart.dispose();
-		shell.open();
 		
-		while (!shell.isDisposed()) {
-	          if (!display.readAndDispatch()) {
-	            display.sleep();
-	          }
-	        }
 		
+		
+		
+		}
 	
 	
-	}
-	public static void initUI(final double[] mV, final Display display){
+	public static void main(String[]args){
 		
+		//BarSeriesDisplay ( new String [] {"male"}, new String[] {"2"}, "gender");
+		//BarSeriesDisplay ( new String [] {"45"}, new String[] {"2", "4", "56", "10"}, "age");
+		//BarSeriesDisplay ( new String [] {"45"}, new String[] {"2", "81931", "81667", "81931", "81801.0",
+		//"22544.0", "16908.0", "264.0", "-5.985810572911061" }, "zipcode");
+		BarSeriesDisplay ( new String [] {"45"}, new String[] {"2", "81931", "81667", "81931", "81801.0",
+		"22544.0", "16908.0", "264.0", "-5.985810572911061", "81800.89665140922" }, "zipcode");
 		
-		checkButton1=new Button(shell,SWT.CHECK);
-		checkButton1.setText("Arithmetic Mean");
-		checkButton1.setSelection(false);
-		checkButton1.setLocation(50, 50);
-		checkButton1.pack();
-		
-		checkButton2=new Button(shell,SWT.CHECK);
-		checkButton2.setText("Geometric Mean");
-		checkButton2.setSelection(false);
-		checkButton2.setLocation(50, 70);
-		checkButton2.pack();
-		
-		checkButton3=new Button(shell,SWT.CHECK);
-		checkButton3.setText("Standard Deviance");
-		checkButton3.setSelection(false);
-		checkButton3.setLocation(50, 90);
-		checkButton3.pack();
-		
-		checkButton4=new Button(shell,SWT.CHECK);
-		checkButton4.setText("Variance");
-		checkButton4.setSelection(false);
-		checkButton4.setLocation(50, 110);
-		checkButton4.pack();
-		
-		checkButton5=new Button(shell,SWT.CHECK);
-		checkButton5.setText("etc 1");
-		checkButton5.setSelection(false);
-		checkButton5.setLocation(50, 130);
-		checkButton5.pack();
-		
-		checkButton6=new Button(shell,SWT.CHECK);
-		checkButton6.setText("etc 2");
-		checkButton6.setSelection(false);
-		checkButton6.setLocation(50, 150);
-		checkButton6.pack();
-		
-		checkButton7=new Button(shell,SWT.CHECK);
-		checkButton7.setText("etc 3");
-		checkButton7.setSelection(false);
-		checkButton7.setLocation(50, 170);
-		checkButton7.pack();
-		
-		checkButton8=new Button(shell,SWT.CHECK);
-		checkButton8.setText("etc 4");
-		checkButton8.setSelection(false);
-		checkButton8.setLocation(50, 190);
-		checkButton8.pack();
-		
-		printButton=new Button(shell,SWT.PUSH);
-		printButton.setText("Print");
-		printButton.setBounds(50, 210, 50, 50);
-		printButton.addSelectionListener(new SelectionAdapter (){
-			@Override
-			public void widgetSelected (SelectionEvent e){
-				
-				if(checkButton1.getSelection()){
-					printLength++;
-				}
-				if(checkButton2.getSelection()){
-					printLength++;
-				}
-				if(checkButton3.getSelection()){
-					printLength++;
-				}
-				if(checkButton4.getSelection()){
-					printLength++;
-				}
-				if(checkButton5.getSelection()){
-					printLength++;
-				}
-				if(checkButton6.getSelection()){
-					printLength++;
-				}
-				if(checkButton7.getSelection()){
-					printLength++;
-				}
-				if(checkButton8.getSelection()){
-					printLength++;
-				}
-				
-				series=new double[printLength];
-
-				if(checkButton1.getSelection()){
-					series[valuesTransmitted]=mV[0];
-					valuesTransmitted++;
-				}
-				if(checkButton2.getSelection()){
-					series[valuesTransmitted]=mV[1];
-					valuesTransmitted++;
-				}
-				if(checkButton3.getSelection()){
-					series[valuesTransmitted]=mV[2];
-					valuesTransmitted++;
-				}
-				if(checkButton4.getSelection()){
-					series[valuesTransmitted]=mV[3];
-					valuesTransmitted++;
-				}
-				if(checkButton5.getSelection()){
-					series[valuesTransmitted]=mV[4];
-					valuesTransmitted++;
-				}
-				if(checkButton6.getSelection()){
-					series[valuesTransmitted]=mV[5];
-					valuesTransmitted++;
-				}
-				if(checkButton7.getSelection()){
-					series[valuesTransmitted]=mV[6];
-					valuesTransmitted++;
-				}
-				if(checkButton8.getSelection()){
-					series[valuesTransmitted]=mV[7];
-					valuesTransmitted++;
-				}
-				
-				Display(display, series);
-				//give series to next class to print out the values!
-			}
-		});
-		
-		
-		Button exitButton = new Button(shell, SWT.PUSH);
-        exitButton.setText("Cancel");
-        exitButton.setLayoutData(new RowData(80, 30));
-        
-	}
 	
-	public static void Display (Display display, double[] values){
-		
-		shell2=new Shell(display);
-		shell2.setText("Choose the values you want to display");
-		
-		
-		shell.setSize(500, 500);
-		
-		shell.open();
-		
-		while (!shell.isDisposed()) {
-	          if (!display.readAndDispatch()) {
-	            display.sleep();
-	          }
-	        }
-		
-	}
-
+		}
 }
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
