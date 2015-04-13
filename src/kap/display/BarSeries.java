@@ -4,7 +4,6 @@ package display;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -19,28 +18,26 @@ import org.swtchart.Range;
 
 
 
+
 public class BarSeries {
 	
-	public static Shell shell;
-	public static Shell shell2;
-	public static Button checkButton1;
-	public static Button checkButton2;
-	public static Button checkButton3;
-	public static Button checkButton4;
-	public static Button checkButton5;
-	public static Button checkButton6;
-	public static Button checkButton7;
-	public static Button checkButton8;
-	public static Button checkButton9;
-	public static Button checkButton10;
-	public static Button printButton;
-	public static double[] ySeries;
-	public static int printLength=0;
-	public static int valuesTransmitted=0;
-	public static Composite composite;
-	
+	private static Shell shell;
+	private static Shell shell2;
+	private static String mode;
 	
 	public static void BarSeriesDisplay (String[] modes, String[] mathValues, String attribute){
+		
+		mode=new String(mathValues[0]+": ");
+		
+		for (int i=0; i<modes.length;i++){
+			mode=mode.concat(modes[i]);
+			if((i+1)!=modes.length){
+				mode=mode.concat(", ");
+			}
+		}
+		
+		System.out.println(mode);
+		
 		
 		//will be implemented in this class if tests are completed. The main() class will be removed 
 		//after completing tests.
@@ -72,21 +69,32 @@ public class BarSeries {
 		chart.getAxisSet().getYAxis(0).getTitle().setVisible(false);
 		
 		
+		
 		if (mathValues.length==1){
 			
-		xAxis.setCategorySeries(new String[]{"Mode"});
-		xAxis.enableCategory(true);
-		xTick.setVisible(false);
-		chart.getAxisSet().getXAxis(0).getTitle().setText("Mode");
-		chart.getAxisSet().getXAxis(0).getTitle().setVisible(true);
-
-		BarSeries.setBarPadding(50);
-		BarSeries.setYSeries(new double[]{Double.parseDouble(mathValues[0])});
+			
+			String[] formats=new String [] {mode};
+			barLabel.setFormats(formats);
+		
+		
+			xAxis.setCategorySeries(new String[]{"Mode"});
+			xAxis.enableCategory(true);
+			xTick.setVisible(false);
+			chart.getAxisSet().getXAxis(0).getTitle().setText("Mode");
+			chart.getAxisSet().getXAxis(0).getTitle().setVisible(true);
+		
+			BarSeries.setBarPadding(50);
+			BarSeries.setYSeries(new double[]{Double.parseDouble(mathValues[0])});
 
 		
 		
 		}
 		if (mathValues.length==4){
+			
+			
+			
+			String[] formats=new String [] {mode, mathValues[1], mathValues[2], mathValues[3]};
+			barLabel.setFormats(formats);
 			
 			xAxis.setCategorySeries(new String[] {"Mode","Median", "Min","Max"});
 			xAxis.enableCategory(true);
@@ -98,6 +106,12 @@ public class BarSeries {
 			Double.parseDouble(mathValues[3])});
 		} 
 		if (mathValues.length==9){
+			
+			String[] formats=new String [] {mode, mathValues[1], mathValues[2], mathValues[3], mathValues[4]
+					, mathValues[5], mathValues[6], mathValues[7], mathValues[8]};
+			barLabel.setFormats(formats);
+			
+			
 			xAxis.setCategorySeries(new String[] {"Mode","Median", "Min","Max",
 			"Mean","Variance", "Pop. Variance","range", "kurtosis"});
 			xAxis.enableCategory(true);
@@ -112,6 +126,12 @@ public class BarSeries {
 				
 			}
 		if(mathValues.length==10){
+			
+			String[] formats=new String [] {mode, mathValues[1], mathValues[2], mathValues[3], mathValues[4]
+					, mathValues[5], mathValues[6], mathValues[7], mathValues[8], mathValues[9]};
+			barLabel.setFormats(formats);
+			
+			
 			xAxis.setCategorySeries(new String[] {"Mode","Median", "Min","Max",
 			"Mean","Variance", "Pop. Variance","range", "kurtosis", "Geometric Mean"});
 			xAxis.enableCategory(true);
@@ -164,15 +184,31 @@ public class BarSeries {
 	
 	public static void main(String[]args){
 		
-		//BarSeriesDisplay ( new String [] {"male"}, new String[] {"2"}, "gender");
-		//BarSeriesDisplay ( new String [] {"45"}, new String[] {"2", "4", "56", "10"}, "age");
+		//BarSeriesDisplay ( new String [] {"male, female"}, new String[] {"2"}, "gender");
+		//BarSeriesDisplay ( new String [] {"45", "465", "14", "36", "253"}, new String[] {"2", "4", "56", "10"}, "age");
 		//BarSeriesDisplay ( new String [] {"45"}, new String[] {"2", "81931", "81667", "81931", "81801.0",
 		//"22544.0", "16908.0", "264.0", "-5.985810572911061" }, "zipcode");
-		BarSeriesDisplay ( new String [] {"45"}, new String[] {"2", "81931", "81667", "81931", "81801.0",
+		BarSeriesDisplay ( new String [] {"45", "35", "252", "46", "74", "77", "367"}, new String[] {"2", "81931", "81667", "81931", "81801.0",
 		"22544.0", "16908.0", "264.0", "-5.985810572911061", "81800.89665140922" }, "zipcode");
 		
 	
 		}
+
+
+	public static Shell getShell() {
+		return shell;
+	}
+
+
+	public static Shell getShell2() {
+		return shell2;
+	}
+
+
+	
+
+
+	
 }
 
 	

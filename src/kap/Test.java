@@ -1,4 +1,7 @@
-import math.DoingTheMath;
+import java.util.List;
+
+import math.MathForBoxPlot;
+
 
 
 
@@ -57,10 +60,8 @@ public class Test extends Example{
         //System.out.println
         
        
-        DoingTheMath.GetAttributeValues(dataH, "age");
-        DoingTheMath.GetAttributeValues(dataH, "gender");
-        DoingTheMath.GetAttributeValues(dataH, "zipcode");
-        DoingTheMath.GetAttributeValues(dataH, "date");
+        List list=MathForBoxPlot.GetAttributeValuesList(dataH, "date");
+        System.out.println(list);
         
         
         //DataTypeTesting.Zeug(dataH, "age");
