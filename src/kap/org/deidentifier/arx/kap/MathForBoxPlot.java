@@ -1,4 +1,4 @@
-package math;
+package org.deidentifier.arx.kap;
 
 
 import java.util.ArrayList;
@@ -21,24 +21,7 @@ public class MathForBoxPlot {
 	
 	
 	
-	
-	
-	public static ArrayList<Double> valueList;
-	public static ArrayList<Integer> modeAmountList;
-	
-	public static int[] valueCounter;
-	public static String[] modes;
-	
-	public static String[] valuesWithoutNull;
-	
-	public static int temp;
-	public static int temp2;
-	public static int temp3;
-	public static int modeCounter;
-	
-
-	
-	public static ArrayList<Double> GetAttributeValuesList(DataHandle dataHandle, String attribute){
+	public ArrayList<Double> GetAttributeValuesList(DataHandle dataHandle, String attribute){
 
 		final int rowAmount= dataHandle.getNumRows();
 		final boolean[] isNull=new boolean[rowAmount];
@@ -101,7 +84,7 @@ public class MathForBoxPlot {
 	
 	
 	
-	valueList = new ArrayList<Double>();
+	final ArrayList<Double> valueList = new ArrayList<Double>();
 	
 	for (int i=0;i<rowAmount;i++){
 		if(!isNull[i]){

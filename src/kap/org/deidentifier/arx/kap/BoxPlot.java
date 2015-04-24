@@ -1,4 +1,4 @@
-package display;
+package org.deidentifier.arx.kap;
 
 
 import java.awt.Color;
@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+
+
+
 
 
 import org.deidentifier.arx.Data;
@@ -27,16 +30,16 @@ public class BoxPlot {
 	
 	
 
-	public static void displayBoxPlot(DataHandle dataHandle, String attribute) {
+	public void displayBoxPlot(DataHandle dataHandle, String attribute) {
 		
 		final DefaultBoxAndWhiskerCategoryDataset boxPlotData = new DefaultBoxAndWhiskerCategoryDataset();
 		
-		
-		ArrayList<Double> values=math.MathForBoxPlot.GetAttributeValuesList(dataHandle, attribute);
+		MathForBoxPlot boxPlotMath=new MathForBoxPlot();
+		ArrayList<Double> values=boxPlotMath.GetAttributeValuesList(dataHandle, attribute);
 		
 		//TODO: count number of attributes with fitting scales, number of
 		for (int i=0;i<values.size();i++){
-			boxPlotData.add(values, "1", "1");
+			boxPlotData.add(values, "1", "2");
 		}
 		
 	    CategoryAxis xAxis = new CategoryAxis("");
@@ -96,22 +99,6 @@ public class BoxPlot {
         data.add("34", "female", null, "05.01.1982");
         data.add("70", "male", "81931", "24.03.1982");
         data.add("45", "male", "81931", "NULL");
-        final DefaultHierarchy age = Hierarchy.create();
-        age.add("34", "<50", "*");
-        age.add("45", "<50", "*");
-        age.add("66", ">=50", "*");
-        age.add("70", ">=50", "*");
-
-        final DefaultHierarchy gender = Hierarchy.create();
-        gender.add("male", "*");
-        gender.add("female", "*");
-
-        // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
-        zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
-        zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
-        zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
-        zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
 
 
         data.getDefinition().setDataType("age", DataType.INTEGER);
@@ -122,8 +109,8 @@ public class BoxPlot {
 
         DataHandle dataH=data.getHandle();
         
-		
-		displayBoxPlot(dataH, "age");
+		BoxPlot example=new BoxPlot();
+		example.displayBoxPlot(dataH, "age");
 		
 	}
 }
