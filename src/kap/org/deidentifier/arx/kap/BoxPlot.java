@@ -12,12 +12,14 @@ import javax.swing.JScrollPane;
 
 
 
+
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data.DefaultData;
+import org.eclipse.swt.widgets.Display;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
@@ -54,11 +56,11 @@ public class BoxPlot {
 	    renderer.setFillBox(true);
 	    renderer.setMeanVisible(false);
 	    renderer.setMedianVisible(true);
-	    renderer.setPaint(Color.DARK_GRAY);
+	    renderer.setPaint(new Color(80,240,180));
 	    
 
 	    chart.setBackgroundPaint(Color.white); 
-	    plot.setBackgroundPaint(Color.lightGray); 
+	    plot.setBackgroundPaint(Color.white); 
 	    plot.setDomainGridlinePaint(Color.white); 
 	    plot.setDomainGridlinesVisible(true); 
 	    plot.setRangeGridlinePaint(Color.white);
