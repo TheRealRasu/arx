@@ -26,7 +26,7 @@ public class KAPDisplay {
 	Button choice3;
 	Label prompt;
 
-	public void displayData(final StatisticsSummary statSum,
+	public void displayData(final StatisticsSummary<?> statSum,
 			final String attribute, final DataHandle dataHandle) {
 		final Display display = new Display();
 
@@ -161,7 +161,7 @@ public class KAPDisplay {
 
 	}
 
-	public void intervalRatioText(Display display, StatisticsSummary statSum,
+	public void intervalRatioText(Display display, StatisticsSummary<?> statSum,
 			String attribute) {
 
 		final Shell modeShell = new Shell(display, SWT.CLOSE);
@@ -195,7 +195,7 @@ public class KAPDisplay {
 	}
 
 	public void intervalRatioBarSeries(Display display,
-			StatisticsSummary statSum, String attribute) {
+			StatisticsSummary<?> statSum, String attribute) {
 
 		final Shell intervalRatioShell = new Shell(display, SWT.CLOSE);
 		intervalRatioShell.setSize(800, 600);

@@ -32,7 +32,7 @@ public class Test extends Example {
 		KAPDisplay barSeries = new KAPDisplay();
 		DataHandle dataH = data.getHandle();
 
-		StatisticsSummary statSum = dataH.getStatistics()
+		StatisticsSummary<?> statSum = dataH.getStatistics()
 				.getSummaryStatistics(true).get("String");
 
 		statSum = dataH.getStatistics().getSummaryStatistics(true)
