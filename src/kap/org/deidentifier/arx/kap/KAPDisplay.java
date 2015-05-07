@@ -21,10 +21,11 @@ import org.swtchart.ISeriesLabel;
 
 public class KAPDisplay {
 
-	Button choice1;
-	Button choice2;
-	Button choice3;
-	Label prompt;
+	private Button choice1;
+	private Button choice2;
+	private Button choice3;
+	private Label prompt;
+	private double[] intervalRatioSeries;
 
 	public void displayData(final StatisticsSummary<?> statSum,
 			final String attribute, final DataHandle dataHandle) {
@@ -49,8 +50,6 @@ public class KAPDisplay {
 
 		} else if (statSum.getScale() == ScaleOfMeasure.ORDINAL) {
 
-			if (dataHandle.getDefinition().getDataType(attribute) == DataType.STRING
-					|| dataHandle.getDefinition().getDataType(attribute) == DataType.ORDERED_STRING) {
 
 				prompt = new Label(shell, SWT.LEFT);
 				shell.setText("Displaying the data of attribute " + attribute);
@@ -66,52 +65,12 @@ public class KAPDisplay {
 				prompt.setText(displayText);
 				prompt.setBounds(0, 0, 1000, 100);
 
-			} else {
+		
 
-				shell.setSize(800, 600);
-				Chart medianMinMaxChart = new Chart(shell, SWT.NONE);
-				shell.setLayout(new FillLayout());
-
-				medianMinMaxChart.getAxisSet().getXAxis(0).getTitle()
-						.setVisible(false);
-				medianMinMaxChart.getAxisSet().getYAxis(0).getTitle()
-						.setVisible(false);
-
-				medianMinMaxChart.getTitle().setText(
-						"Displaying the Median, Minimum and Maximum of the attribute "
-								+ attribute);
-
-				final double[] medMinMaxSeries = new double[] {
-						Double.parseDouble(statSum.getModeAsString()),
-						Double.parseDouble(statSum.getMedianAsString()),
-						Double.parseDouble(statSum.getMinAsString()),
-						Double.parseDouble(statSum.getMaxAsString()) };
-
-				IBarSeries barSeries = (IBarSeries) medianMinMaxChart
-						.getSeriesSet().createSeries(SeriesType.BAR, attribute);
-				barSeries.setVisibleInLegend(false);
-				barSeries.setBarColor(new Color(Display.getDefault(), 80, 240,
-						180));
-				barSeries.setYSeries(medMinMaxSeries);
-
-				IAxis xAxis = medianMinMaxChart.getAxisSet().getXAxis(0);
-				xAxis.setCategorySeries(new String[] { "Mode", "Median",
-						"Minimum", "Maximum" });
-				xAxis.enableCategory(true);
-
-				ISeriesLabel valueLabel = barSeries.getLabel();
-				valueLabel.setFormat("######,######");
-				valueLabel.setVisible(true);
-
-				medianMinMaxChart.getAxisSet().adjustRange();
-				shell.open();
-
-			}
+			
 
 		} else if (statSum.getScale() == ScaleOfMeasure.INTERVAL
 				|| statSum.getScale() == ScaleOfMeasure.RATIO) {
-
-			if (dataHandle.getDataType(attribute) != DataType.DATE) {
 
 				choice1 = new Button(shell, SWT.PUSH);
 
@@ -136,8 +95,24 @@ public class KAPDisplay {
 				choice2.addSelectionListener(new SelectionListener() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						BoxPlot boxPlot = new BoxPlot();
+						final BoxPlotJFreeChart boxPlot=new BoxPlotJFreeChart();
 						boxPlot.displayBoxPlot(dataHandle, attribute);
+					}
+
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						widgetSelected(e);
+					}
+				});
+				
+				choice3 = new Button(shell, SWT.PUSH);
+
+				choice3.setText("Display values as Bar Series");
+				choice3.setBounds(10, 40, 150, 30);
+				choice3.addSelectionListener(new SelectionListener() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						intervalRatioBarSeries(display, statSum, attribute);
 					}
 
 					@Override
@@ -148,7 +123,7 @@ public class KAPDisplay {
 
 			}
 
-		}
+		
 
 		shell.open();
 
@@ -170,7 +145,7 @@ public class KAPDisplay {
 
 		Label modeLabel = new Label(modeShell, SWT.NONE);
 		String displayText = ("Attribute:\t\t" + attribute
-				+ "\nScale Of Measure:\t\t" + "Ordinal scale\nMode:\t\t\t"
+				+ "\nScale Of Measure:\t\t" + statSum.getScale().toString()+"\nMode:\t\t\t"
 				+ statSum.getModeAsString() + "\nMedian:\t\t\t"
 				+ statSum.getMedianAsString() + "\nMaximum:\t\t"
 				+ statSum.getMaxAsString() + "\nMinimum:\t\t"
@@ -191,6 +166,9 @@ public class KAPDisplay {
 		modeLabel.setBounds(10, 5, 1000, 1000);
 		modeShell.setSize(350, 300);
 		modeShell.open();
+		
+		
+		
 
 	}
 
@@ -200,7 +178,7 @@ public class KAPDisplay {
 		final Shell intervalRatioShell = new Shell(display, SWT.CLOSE);
 		intervalRatioShell.setSize(800, 600);
 		intervalRatioShell
-				.setText("Displaying the Median, Minimum and Maximum of the attribute "
+				.setText("Displaying the Mode Median, Minimum and Maximum of the attribute "
 						+ attribute);
 		intervalRatioShell.setLayout(new FillLayout());
 
@@ -212,29 +190,40 @@ public class KAPDisplay {
 				.setVisible(false);
 
 		intervalRatioChart.getTitle().setText(
-				"Displaying the Median, Minimum and Maximum of the attribute "
+				"Displaying the Mode, Median, Minimum and Maximum of the attribute "
 						+ attribute);
-
-		final double[] intervalRatioSeries = new double[] {
+		
+		if(statSum.getScale()!=ScaleOfMeasure.INTERVAL){
+			
+			intervalRatioSeries = new double[] {
+				Double.parseDouble(statSum.getModeAsString()),
 				Double.parseDouble(statSum.getMedianAsString()),
 				Double.parseDouble(statSum.getMinAsString()),
 				Double.parseDouble(statSum.getMaxAsString()) };
-
-		IBarSeries barSeries = (IBarSeries) intervalRatioChart.getSeriesSet()
+		} else {
+			
+			intervalRatioSeries=new double[]{
+					
+			};
+			
+		}
+			IBarSeries barSeries = (IBarSeries) intervalRatioChart.getSeriesSet()
 				.createSeries(SeriesType.BAR, attribute);
-		barSeries.setBarColor(new Color(Display.getDefault(), 80, 240, 180));
-		barSeries.setYSeries(intervalRatioSeries);
+			barSeries.setBarColor(new Color(Display.getDefault(), 80, 240, 180));
+			barSeries.setYSeries(intervalRatioSeries);
 
-		IAxis xAxis = intervalRatioChart.getAxisSet().getXAxis(0);
-		xAxis.setCategorySeries(new String[] { "Median", "Minimum", "Maximum" });
-		xAxis.enableCategory(true);
+			IAxis xAxis = intervalRatioChart.getAxisSet().getXAxis(0);
+			xAxis.setCategorySeries(new String[] { "Mode", "Median", "Minimum", "Maximum" });
+			xAxis.enableCategory(true);
 
-		ISeriesLabel valueLabel = barSeries.getLabel();
-		valueLabel.setFormat("######,######");
-		valueLabel.setVisible(true);
+			ISeriesLabel valueLabel = barSeries.getLabel();
+			valueLabel.setFormat("######.######");
+			valueLabel.setVisible(true);
 
-		intervalRatioChart.getAxisSet().adjustRange();
-		intervalRatioShell.open();
+			intervalRatioChart.getAxisSet().adjustRange();
+			
+			intervalRatioShell.open();
+			
 
 	}
 

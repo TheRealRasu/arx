@@ -44,11 +44,6 @@ public class Test extends Example {
 		barSeries.displayData(statSum, "OrderedString", dataH);
 
 		statSum = dataH.getStatistics().getSummaryStatistics(true)
-				.get("OrderedString");
-		dataH.getDefinition().setDataType("OrderedString", DataType.INTEGER);
-		barSeries.displayData(statSum, "OrderedString", dataH);
-
-		statSum = dataH.getStatistics().getSummaryStatistics(true)
 				.get("integer");
 		barSeries.displayData(statSum, "integer", dataH);
 

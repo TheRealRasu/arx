@@ -8,12 +8,6 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.aggregates.StatisticsSummary.ScaleOfMeasure;
 
-/* 
- * Mein erster Entwurf für die Berechnung des arithmetischen Mittels von Beispieldaten in ARX.
- * Der Rest des Projektes ist in Englisch kommentiert.
- * 
- * 
- */
 public class MathForBoxPlot {
 
 	public ArrayList<Double> GetAttributeValuesList(DataHandle dataHandle,
@@ -34,7 +28,6 @@ public class MathForBoxPlot {
 		final DataType<?> type = dataHandle.getDataType(attribute);
 		final Class<?> clazz = type.getDescription().getWrappedClass();
 
-		// Scale
 		ScaleOfMeasure scale = ScaleOfMeasure.NOMINAL;
 		if (clazz == Long.class || clazz == Double.class) {
 			scale = ScaleOfMeasure.RATIO;
