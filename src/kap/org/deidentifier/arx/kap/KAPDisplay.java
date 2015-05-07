@@ -1,7 +1,6 @@
 package org.deidentifier.arx.kap;
 
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.StatisticsSummary;
 import org.deidentifier.arx.aggregates.StatisticsSummary.ScaleOfMeasure;
 import org.eclipse.swt.SWT;
@@ -24,47 +23,70 @@ public class KAPDisplay {
 	private Button choice1;
 	private Button choice2;
 	private Button choice3;
-	private Label prompt;
-	private double[] intervalRatioSeries;
+	
+	private Label attLabel1;
+	private Label attLabel2;
+	private Label scaleLabel1;
+	private Label scaleLabel2;
+	private Label modeLabel1;
+	private Label modeLabel2;
+	private Label medianLabel1;
+	private Label medianLabel2;
+	private Label maxLabel1;
+	private Label maxLabel2;
+	private Label minLabel1;
+	private Label minLabel2;
+	private Label meanLabel1;
+	private Label meanLabel2;
+	private Label rangeLabel1;
+	private Label rangeLabel2;
+	private Label kurtosisLabel1;
+	private Label kurtosisLabel2;
+	private Label samVarLabel1;
+	private Label samVarLabel2;
+	private Label popVarLabel1;
+	private Label popVarLabel2;
+	private Label stdDevLabel1;
+	private Label stdDevLabel2;
+	private Label geoMeanLabel1;
+	private Label geoMeanLabel2;
+	
+	
+	private double[] barSeriesDouble;
 
 	public void displayData(final StatisticsSummary<?> statSum,
 			final String attribute, final DataHandle dataHandle) {
 		final Display display = new Display();
 
-		Shell shell = new Shell(display);
-		shell.setSize(300, 200);
-		shell.setText("Choose the values of the attribute " + attribute);
+		final Shell mainShell = new Shell(display);
+		final Shell textShell =new Shell(display);
+		final Shell barSeriesShell=new Shell(display);
+		mainShell.setSize(400, 200);
+		textShell.setSize(400, 400);
+		barSeriesShell.setSize(640, 480);
+		mainShell.setText("Displaying the data of attribute " + attribute);
+		textShell.setText("Text shell");
+		barSeriesShell.setText("Bar series shell");
+		
 
-		String displayText = ("Attribute:\t\t" + attribute);
+		if (statSum.getScale() == ScaleOfMeasure.NOMINAL|| statSum.getScale()==ScaleOfMeasure.ORDINAL) {
+			
+			choice1 = new Button(mainShell, SWT.PUSH);
 
-		if (statSum.getScale() == ScaleOfMeasure.NOMINAL) {
+			choice1.setText("Display values as text");
+			choice1.setBounds(10, 10, 150, 30);
+			choice1.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					attributeText(textShell, statSum, attribute);
+				}
 
-			prompt = new Label(shell, SWT.LEFT);
-			shell.setText("Displaying the data of attribute " + attribute);
-
-			displayText = displayText
-					.concat("\nScale Of Measure:\t\tNominal scale\nMode:\t\t\t"
-							+ statSum.getModeAsString());
-			prompt.setText(displayText);
-			prompt.setBounds(0, 0, 1000, 1000);
-
-		} else if (statSum.getScale() == ScaleOfMeasure.ORDINAL) {
-
-
-				prompt = new Label(shell, SWT.LEFT);
-				shell.setText("Displaying the data of attribute " + attribute);
-
-				displayText = displayText
-						.concat("\nScale Of Measure:\t\tOrdinal scale\nMode:\t\t\t"
-								+ statSum.getModeAsString()
-								+ "\nMedian:\t\t\t"
-								+ statSum.getMedianAsString()
-								+ "\nMaximum:\t\t"
-								+ statSum.getMaxAsString()
-								+ "\nMinimum:\t\t" + statSum.getMinAsString());
-				prompt.setText(displayText);
-				prompt.setBounds(0, 0, 1000, 100);
-
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+			});
+			
 		
 
 			
@@ -72,14 +94,14 @@ public class KAPDisplay {
 		} else if (statSum.getScale() == ScaleOfMeasure.INTERVAL
 				|| statSum.getScale() == ScaleOfMeasure.RATIO) {
 
-				choice1 = new Button(shell, SWT.PUSH);
+				choice1 = new Button(mainShell, SWT.PUSH);
 
 				choice1.setText("Display values as text");
 				choice1.setBounds(10, 10, 150, 30);
 				choice1.addSelectionListener(new SelectionListener() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						intervalRatioText(display, statSum, attribute);
+						attributeText(textShell, statSum, attribute);
 					}
 
 					@Override
@@ -88,7 +110,7 @@ public class KAPDisplay {
 					}
 				});
 
-				choice2 = new Button(shell, SWT.PUSH);
+				choice2 = new Button(mainShell, SWT.PUSH);
 
 				choice2.setText("Display a Box-Plot");
 				choice2.setBounds(160, 10, 120, 30);
@@ -105,14 +127,14 @@ public class KAPDisplay {
 					}
 				});
 				
-				choice3 = new Button(shell, SWT.PUSH);
+				choice3 = new Button(mainShell, SWT.PUSH);
 
 				choice3.setText("Display values as Bar Series");
 				choice3.setBounds(10, 40, 150, 30);
 				choice3.addSelectionListener(new SelectionListener() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						intervalRatioBarSeries(display, statSum, attribute);
+						barSeries(barSeriesShell, statSum, attribute);
 					}
 
 					@Override
@@ -125,9 +147,10 @@ public class KAPDisplay {
 
 		
 
-		shell.open();
-
-		while (!shell.isDisposed()) {
+		mainShell.open();
+		textShell.open();
+		barSeriesShell.open();
+		while (!mainShell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
@@ -136,83 +159,165 @@ public class KAPDisplay {
 
 	}
 
-	public void intervalRatioText(Display display, StatisticsSummary<?> statSum,
+	public void attributeText(Shell textShell, StatisticsSummary<?> statSum,
 			String attribute) {
 
-		final Shell modeShell = new Shell(display, SWT.CLOSE);
-		modeShell
-				.setText("Displaying the values of the attribute " + attribute);
+		attLabel1 = new Label(textShell, SWT.LEFT);
+		attLabel2 = new Label(textShell, SWT.LEFT);
+		attLabel1.setBounds(10, 10, 160, 20);
+		attLabel2.setBounds(170,10,160,20);
+		attLabel1.setText("Attribute:");
+		attLabel2.setText(attribute);
+		
+		
+		scaleLabel1 = new Label(textShell, SWT.LEFT);
+		scaleLabel2 = new Label(textShell, SWT.LEFT);
+		scaleLabel1.setBounds(10, 30, 160, 20);
+		scaleLabel2.setBounds(170,30,160,20);
+		scaleLabel1.setText("Scale Of Measure");
+		scaleLabel2.setText(statSum.getScale().toString());
+		
+	
+		modeLabel1 = new Label(textShell, SWT.LEFT);
+		modeLabel2 = new Label(textShell, SWT.LEFT);
+		modeLabel1.setText("Mode:");
+		modeLabel2.setText(statSum.getModeAsString());
+		modeLabel1.setBounds(10, 50, 160, 20);
+		modeLabel2.setBounds(170,50,160,20);
+		
 
-		Label modeLabel = new Label(modeShell, SWT.NONE);
-		String displayText = ("Attribute:\t\t" + attribute
-				+ "\nScale Of Measure:\t\t" + statSum.getScale().toString()+"\nMode:\t\t\t"
-				+ statSum.getModeAsString() + "\nMedian:\t\t\t"
-				+ statSum.getMedianAsString() + "\nMaximum:\t\t"
-				+ statSum.getMaxAsString() + "\nMinimum:\t\t"
-				+ statSum.getMinAsString() + "\nArithmetic Mean:\t\t"
-				+ statSum.getArithmeticMeanAsString()
-				+ "\nSample Variance:\t\t"
-				+ statSum.getSampleVarianceAsString()
-				+ "\nPopulation Variance:\t"
-				+ statSum.getPopulationVarianceAsString()
-				+ "\nStandard Deviance:\t" + statSum.getStdDevAsString()
-				+ "\nKurtosis:\t\t\t" + statSum.getKurtosisAsString()
-				+ "\nRange:\t\t\t" + statSum.getRangeAsString());
-		if (statSum.isGeometricMeanAvailable()) {
-			displayText = displayText.concat("\nGeometric Mean:\t\t"
-					+ statSum.getGeometricMeanAsString());
+		if(statSum.getScale()!=ScaleOfMeasure.NOMINAL){
+			
+			medianLabel1 = new Label(textShell, SWT.LEFT);
+			medianLabel2 = new Label(textShell, SWT.LEFT);
+			medianLabel1.setText("Median:");
+			medianLabel2.setText(statSum.getMedianAsString());
+			medianLabel1.setBounds(10, 70, 160, 20);
+			medianLabel2.setBounds(170, 70, 160, 20);
+			
+			maxLabel1 = new Label(textShell, SWT.LEFT);
+			maxLabel2 = new Label(textShell, SWT.LEFT);
+			maxLabel1.setText("Maximum:");
+			maxLabel2.setText(statSum.getMaxAsString());
+			maxLabel1.setBounds(10, 90, 160, 20);
+			maxLabel2.setBounds(170, 90, 160, 20);
+			
+			minLabel1 = new Label(textShell, SWT.LEFT);
+			minLabel2 = new Label(textShell, SWT.LEFT);
+			minLabel1.setText("Minimum:");
+			minLabel2.setText(statSum.getMinAsString());
+			minLabel1.setBounds(10, 110, 160, 20);
+			minLabel2.setBounds(170, 110, 160, 20);
+
 		}
-		modeLabel.setText(displayText);
-		modeLabel.setBounds(10, 5, 1000, 1000);
-		modeShell.setSize(350, 300);
-		modeShell.open();
+		
+		if(statSum.getScale()==ScaleOfMeasure.INTERVAL || statSum.getScale()==ScaleOfMeasure.RATIO){
+			
+			meanLabel1 = new Label(textShell, SWT.LEFT);
+			meanLabel2 = new Label(textShell, SWT.LEFT);
+			meanLabel1.setText("Arithmetic mean:");
+			meanLabel2.setText(statSum.getArithmeticMeanAsString());
+			meanLabel1.setBounds(10, 130, 160, 20);
+			meanLabel2.setBounds(170, 130, 160, 20);
+			
+			rangeLabel1 = new Label(textShell, SWT.LEFT);
+			rangeLabel2 = new Label(textShell, SWT.LEFT);
+			rangeLabel1.setText("range:");
+			rangeLabel2.setText(statSum.getRangeAsString());
+			rangeLabel1.setBounds(10, 150, 160, 20);
+			rangeLabel2.setBounds(170, 150, 160, 20);
+			
+			kurtosisLabel1 = new Label(textShell, SWT.LEFT);
+			kurtosisLabel2 = new Label(textShell, SWT.LEFT);
+			kurtosisLabel1.setText("kurtosis:");
+			kurtosisLabel2.setText(statSum.getKurtosisAsString());
+			kurtosisLabel1.setBounds(10, 170, 160, 20);
+			kurtosisLabel2.setBounds(170, 170, 160, 20);
+			
+			samVarLabel1 = new Label(textShell, SWT.LEFT);
+			samVarLabel2 = new Label(textShell, SWT.LEFT);
+			samVarLabel1.setText("sample variance:");
+			samVarLabel2.setText(statSum.getSampleVarianceAsString());
+			samVarLabel1.setBounds(10, 190, 160, 20);
+			samVarLabel2.setBounds(170, 190, 160, 20);
+			
+			popVarLabel1 = new Label(textShell, SWT.LEFT);
+			popVarLabel2 = new Label(textShell, SWT.LEFT);
+			popVarLabel1.setText("population variance:");
+			popVarLabel2.setText(statSum.getPopulationVarianceAsString());
+			popVarLabel1.setBounds(10, 210, 160, 20);
+			popVarLabel2.setBounds(170, 210, 160, 20);
+			
+			stdDevLabel1 = new Label(textShell, SWT.LEFT);
+			stdDevLabel2 = new Label(textShell, SWT.LEFT);
+			stdDevLabel1.setText("standard deviance:");
+			stdDevLabel2.setText(statSum.getStdDevAsString());
+			stdDevLabel1.setBounds(10, 230, 160, 20);
+			stdDevLabel2.setBounds(170, 230, 160, 20);
+			
+			
+		}
+		
+		if(statSum.getScale()==ScaleOfMeasure.RATIO){
+			
+			
+			geoMeanLabel1 = new Label(textShell, SWT.LEFT);
+			geoMeanLabel2 = new Label(textShell, SWT.LEFT);
+			geoMeanLabel1.setText("geometric mean:");
+			geoMeanLabel2.setText(statSum.getGeometricMeanAsString());
+			geoMeanLabel1.setBounds(10, 250, 160, 20);
+			geoMeanLabel2.setBounds(170, 250, 160, 20);
+			
+		}
+		
+		
+		
+		
 		
 		
 		
 
 	}
 
-	public void intervalRatioBarSeries(Display display,
+	
+	
+	public void barSeries(Shell barShell,
 			StatisticsSummary<?> statSum, String attribute) {
 
-		final Shell intervalRatioShell = new Shell(display, SWT.CLOSE);
-		intervalRatioShell.setSize(800, 600);
-		intervalRatioShell
-				.setText("Displaying the Mode Median, Minimum and Maximum of the attribute "
-						+ attribute);
-		intervalRatioShell.setLayout(new FillLayout());
+		
+		barShell.setLayout(new FillLayout());
 
-		Chart intervalRatioChart = new Chart(intervalRatioShell, SWT.NONE);
+		Chart barChart = new Chart(barShell, SWT.NONE);
 
-		intervalRatioChart.getAxisSet().getXAxis(0).getTitle()
+		barChart.getAxisSet().getXAxis(0).getTitle()
 				.setVisible(false);
-		intervalRatioChart.getAxisSet().getYAxis(0).getTitle()
+		barChart.getAxisSet().getYAxis(0).getTitle()
 				.setVisible(false);
 
-		intervalRatioChart.getTitle().setText(
+		barChart.getTitle().setText(
 				"Displaying the Mode, Median, Minimum and Maximum of the attribute "
 						+ attribute);
 		
 		if(statSum.getScale()!=ScaleOfMeasure.INTERVAL){
 			
-			intervalRatioSeries = new double[] {
+			barSeriesDouble = new double[] {
 				Double.parseDouble(statSum.getModeAsString()),
 				Double.parseDouble(statSum.getMedianAsString()),
 				Double.parseDouble(statSum.getMinAsString()),
 				Double.parseDouble(statSum.getMaxAsString()) };
 		} else {
 			
-			intervalRatioSeries=new double[]{
+			barSeriesDouble=new double[]{
 					
 			};
 			
 		}
-			IBarSeries barSeries = (IBarSeries) intervalRatioChart.getSeriesSet()
+			IBarSeries barSeries = (IBarSeries) barChart.getSeriesSet()
 				.createSeries(SeriesType.BAR, attribute);
 			barSeries.setBarColor(new Color(Display.getDefault(), 80, 240, 180));
-			barSeries.setYSeries(intervalRatioSeries);
+			barSeries.setYSeries(barSeriesDouble);
 
-			IAxis xAxis = intervalRatioChart.getAxisSet().getXAxis(0);
+			IAxis xAxis = barChart.getAxisSet().getXAxis(0);
 			xAxis.setCategorySeries(new String[] { "Mode", "Median", "Minimum", "Maximum" });
 			xAxis.enableCategory(true);
 
@@ -220,9 +325,7 @@ public class KAPDisplay {
 			valueLabel.setFormat("######.######");
 			valueLabel.setVisible(true);
 
-			intervalRatioChart.getAxisSet().adjustRange();
-			
-			intervalRatioShell.open();
+			barChart.getAxisSet().adjustRange();
 			
 
 	}
