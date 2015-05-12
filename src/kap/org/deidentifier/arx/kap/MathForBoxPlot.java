@@ -42,15 +42,6 @@ public class MathForBoxPlot {
 					"This scale cannot be displayed with a Box-Plot");
 		}
 
-		System.out.println("The used dataset has " + columnAmount
-				+ " different attributes.");
-
-		System.out.println("The used dataset has " + rowAmount + " entries.");
-
-		System.out.println("The chosen attribut is " + attribute
-				+ " and in column " + (attLocation + 1));
-		System.out.println("It has the " + scale.toString() + " measure");
-
 		String[] values = new String[rowAmount];
 		for (int i = 0; i < rowAmount; i++) {
 			values[i] = dataHandle.getValue(i, attLocation);

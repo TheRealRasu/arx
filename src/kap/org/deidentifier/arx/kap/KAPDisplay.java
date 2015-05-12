@@ -1,6 +1,12 @@
 package org.deidentifier.arx.kap;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.StatisticsSummary;
 import org.deidentifier.arx.aggregates.StatisticsSummary.ScaleOfMeasure;
 import org.eclipse.swt.SWT;
@@ -23,7 +29,7 @@ public class KAPDisplay {
 	private Button choice1;
 	private Button choice2;
 	private Button choice3;
-	
+
 	private Label attLabel1;
 	private Label attLabel2;
 	private Label scaleLabel1;
@@ -50,8 +56,10 @@ public class KAPDisplay {
 	private Label stdDevLabel2;
 	private Label geoMeanLabel1;
 	private Label geoMeanLabel2;
-	
-	
+
+	private boolean barSeriesClicked = false;
+	private boolean boxPlotClicked = false;
+
 	private double[] barSeriesDouble;
 
 	public void displayData(final StatisticsSummary<?> statSum,
@@ -59,18 +67,22 @@ public class KAPDisplay {
 		final Display display = new Display();
 
 		final Shell mainShell = new Shell(display);
-		final Shell textShell =new Shell(display);
-		final Shell barSeriesShell=new Shell(display);
+		final Shell textShell = new Shell(display);
+		final Shell barSeriesShell = new Shell(display);
+
+		final DataType<?> attType = dataHandle.getDefinition().getDataType(
+				attribute);
+
 		mainShell.setSize(400, 200);
 		textShell.setSize(400, 400);
-		barSeriesShell.setSize(640, 480);
+		barSeriesShell.setSize(800, 600);
 		mainShell.setText("Displaying the data of attribute " + attribute);
 		textShell.setText("Text shell");
 		barSeriesShell.setText("Bar series shell");
-		
 
-		if (statSum.getScale() == ScaleOfMeasure.NOMINAL|| statSum.getScale()==ScaleOfMeasure.ORDINAL) {
-			
+		if (statSum.getScale() == ScaleOfMeasure.NOMINAL
+				|| statSum.getScale() == ScaleOfMeasure.ORDINAL) {
+
 			choice1 = new Button(mainShell, SWT.PUSH);
 
 			choice1.setText("Display values as text");
@@ -78,7 +90,7 @@ public class KAPDisplay {
 			choice1.addSelectionListener(new SelectionListener() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					attributeText(textShell, statSum, attribute);
+					attributeText(textShell, statSum, attribute, attType);
 				}
 
 				@Override
@@ -86,66 +98,69 @@ public class KAPDisplay {
 					widgetSelected(e);
 				}
 			});
-			
-		
-
-			
 
 		} else if (statSum.getScale() == ScaleOfMeasure.INTERVAL
 				|| statSum.getScale() == ScaleOfMeasure.RATIO) {
 
-				choice1 = new Button(mainShell, SWT.PUSH);
+			choice1 = new Button(mainShell, SWT.PUSH);
 
-				choice1.setText("Display values as text");
-				choice1.setBounds(10, 10, 150, 30);
-				choice1.addSelectionListener(new SelectionListener() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						attributeText(textShell, statSum, attribute);
+			choice1.setText("Display values as text");
+			choice1.setBounds(10, 10, 150, 30);
+			choice1.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					attributeText(textShell, statSum, attribute, attType);
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+			});
+
+			choice2 = new Button(mainShell, SWT.PUSH);
+
+			choice2.setText("Display a Box-Plot");
+			choice2.setBounds(160, 10, 120, 30);
+			choice2.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!boxPlotClicked) {
+						final BoxPlotJFreeChart boxPlot = new BoxPlotJFreeChart();
+						boxPlot.displayBoxPlot(dataHandle, attribute, attType,
+								statSum);
+						boxPlotClicked = true;
 					}
 
-					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
-						widgetSelected(e);
-					}
-				});
+				}
 
-				choice2 = new Button(mainShell, SWT.PUSH);
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+			});
 
-				choice2.setText("Display a Box-Plot");
-				choice2.setBounds(160, 10, 120, 30);
-				choice2.addSelectionListener(new SelectionListener() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						final BoxPlotJFreeChart boxPlot=new BoxPlotJFreeChart();
-						boxPlot.displayBoxPlot(dataHandle, attribute);
-					}
+			choice3 = new Button(mainShell, SWT.PUSH);
 
-					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
-						widgetSelected(e);
-					}
-				});
-				
-				choice3 = new Button(mainShell, SWT.PUSH);
-
-				choice3.setText("Display values as Bar Series");
-				choice3.setBounds(10, 40, 150, 30);
-				choice3.addSelectionListener(new SelectionListener() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						barSeries(barSeriesShell, statSum, attribute);
+			choice3.setText("Display values as Bar Series");
+			choice3.setBounds(10, 40, 150, 30);
+			choice3.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!barSeriesClicked) {
+						barSeries(barSeriesShell, statSum, attribute, attType);
+						barSeriesClicked = true;
 					}
 
-					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
-						widgetSelected(e);
-					}
-				});
+				}
 
-			}
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+			});
 
-		
+		}
 
 		mainShell.open();
 		textShell.open();
@@ -155,53 +170,52 @@ public class KAPDisplay {
 				display.sleep();
 			}
 		}
+		boxPlotClicked = false;
+		barSeriesClicked = false;
 		display.dispose();
 
 	}
 
 	public void attributeText(Shell textShell, StatisticsSummary<?> statSum,
-			String attribute) {
+			String attribute, DataType<?> attType) {
 
 		attLabel1 = new Label(textShell, SWT.LEFT);
 		attLabel2 = new Label(textShell, SWT.LEFT);
 		attLabel1.setBounds(10, 10, 160, 20);
-		attLabel2.setBounds(170,10,160,20);
+		attLabel2.setBounds(170, 10, 160, 20);
 		attLabel1.setText("Attribute:");
 		attLabel2.setText(attribute);
-		
-		
+
 		scaleLabel1 = new Label(textShell, SWT.LEFT);
 		scaleLabel2 = new Label(textShell, SWT.LEFT);
 		scaleLabel1.setBounds(10, 30, 160, 20);
-		scaleLabel2.setBounds(170,30,160,20);
+		scaleLabel2.setBounds(170, 30, 160, 20);
 		scaleLabel1.setText("Scale Of Measure");
 		scaleLabel2.setText(statSum.getScale().toString());
-		
-	
+
 		modeLabel1 = new Label(textShell, SWT.LEFT);
 		modeLabel2 = new Label(textShell, SWT.LEFT);
 		modeLabel1.setText("Mode:");
 		modeLabel2.setText(statSum.getModeAsString());
 		modeLabel1.setBounds(10, 50, 160, 20);
-		modeLabel2.setBounds(170,50,160,20);
-		
+		modeLabel2.setBounds(170, 50, 160, 20);
 
-		if(statSum.getScale()!=ScaleOfMeasure.NOMINAL){
-			
+		if (statSum.getScale() != ScaleOfMeasure.NOMINAL) {
+
 			medianLabel1 = new Label(textShell, SWT.LEFT);
 			medianLabel2 = new Label(textShell, SWT.LEFT);
 			medianLabel1.setText("Median:");
 			medianLabel2.setText(statSum.getMedianAsString());
 			medianLabel1.setBounds(10, 70, 160, 20);
 			medianLabel2.setBounds(170, 70, 160, 20);
-			
+
 			maxLabel1 = new Label(textShell, SWT.LEFT);
 			maxLabel2 = new Label(textShell, SWT.LEFT);
 			maxLabel1.setText("Maximum:");
 			maxLabel2.setText(statSum.getMaxAsString());
 			maxLabel1.setBounds(10, 90, 160, 20);
 			maxLabel2.setBounds(170, 90, 160, 20);
-			
+
 			minLabel1 = new Label(textShell, SWT.LEFT);
 			minLabel2 = new Label(textShell, SWT.LEFT);
 			minLabel1.setText("Minimum:");
@@ -210,124 +224,183 @@ public class KAPDisplay {
 			minLabel2.setBounds(170, 110, 160, 20);
 
 		}
-		
-		if(statSum.getScale()==ScaleOfMeasure.INTERVAL || statSum.getScale()==ScaleOfMeasure.RATIO){
-			
+
+		if (statSum.getScale() == ScaleOfMeasure.INTERVAL
+				|| statSum.getScale() == ScaleOfMeasure.RATIO) {
+
 			meanLabel1 = new Label(textShell, SWT.LEFT);
 			meanLabel2 = new Label(textShell, SWT.LEFT);
 			meanLabel1.setText("Arithmetic mean:");
 			meanLabel2.setText(statSum.getArithmeticMeanAsString());
 			meanLabel1.setBounds(10, 130, 160, 20);
 			meanLabel2.setBounds(170, 130, 160, 20);
-			
+
 			rangeLabel1 = new Label(textShell, SWT.LEFT);
 			rangeLabel2 = new Label(textShell, SWT.LEFT);
 			rangeLabel1.setText("range:");
 			rangeLabel2.setText(statSum.getRangeAsString());
 			rangeLabel1.setBounds(10, 150, 160, 20);
 			rangeLabel2.setBounds(170, 150, 160, 20);
-			
+
 			kurtosisLabel1 = new Label(textShell, SWT.LEFT);
 			kurtosisLabel2 = new Label(textShell, SWT.LEFT);
 			kurtosisLabel1.setText("kurtosis:");
 			kurtosisLabel2.setText(statSum.getKurtosisAsString());
 			kurtosisLabel1.setBounds(10, 170, 160, 20);
 			kurtosisLabel2.setBounds(170, 170, 160, 20);
-			
+
 			samVarLabel1 = new Label(textShell, SWT.LEFT);
 			samVarLabel2 = new Label(textShell, SWT.LEFT);
 			samVarLabel1.setText("sample variance:");
 			samVarLabel2.setText(statSum.getSampleVarianceAsString());
 			samVarLabel1.setBounds(10, 190, 160, 20);
 			samVarLabel2.setBounds(170, 190, 160, 20);
-			
+
 			popVarLabel1 = new Label(textShell, SWT.LEFT);
 			popVarLabel2 = new Label(textShell, SWT.LEFT);
 			popVarLabel1.setText("population variance:");
 			popVarLabel2.setText(statSum.getPopulationVarianceAsString());
 			popVarLabel1.setBounds(10, 210, 160, 20);
 			popVarLabel2.setBounds(170, 210, 160, 20);
-			
+
 			stdDevLabel1 = new Label(textShell, SWT.LEFT);
 			stdDevLabel2 = new Label(textShell, SWT.LEFT);
 			stdDevLabel1.setText("standard deviance:");
 			stdDevLabel2.setText(statSum.getStdDevAsString());
 			stdDevLabel1.setBounds(10, 230, 160, 20);
 			stdDevLabel2.setBounds(170, 230, 160, 20);
-			
-			
+
 		}
-		
-		if(statSum.getScale()==ScaleOfMeasure.RATIO){
-			
-			
+
+		if (statSum.getScale() == ScaleOfMeasure.RATIO) {
+
 			geoMeanLabel1 = new Label(textShell, SWT.LEFT);
 			geoMeanLabel2 = new Label(textShell, SWT.LEFT);
 			geoMeanLabel1.setText("geometric mean:");
 			geoMeanLabel2.setText(statSum.getGeometricMeanAsString());
 			geoMeanLabel1.setBounds(10, 250, 160, 20);
 			geoMeanLabel2.setBounds(170, 250, 160, 20);
-			
+
 		}
-		
-		
-		
-		
-		
-		
-		
 
 	}
 
-	
-	
-	public void barSeries(Shell barShell,
-			StatisticsSummary<?> statSum, String attribute) {
+	public void barSeries(Shell barShell, StatisticsSummary<?> statSum,
+			String attribute, DataType<?> dataType) {
 
-		
 		barShell.setLayout(new FillLayout());
 
 		Chart barChart = new Chart(barShell, SWT.NONE);
 
-		barChart.getAxisSet().getXAxis(0).getTitle()
-				.setVisible(false);
-		barChart.getAxisSet().getYAxis(0).getTitle()
-				.setVisible(false);
+		barChart.getAxisSet().getXAxis(0).getTitle().setVisible(false);
+		barChart.getAxisSet().getYAxis(0).getTitle().setVisible(false);
 
 		barChart.getTitle().setText(
 				"Displaying the Mode, Median, Minimum and Maximum of the attribute "
 						+ attribute);
-		
-		if(statSum.getScale()!=ScaleOfMeasure.INTERVAL){
-			
+
+		if (dataType != DataType.DATE) {
+
 			barSeriesDouble = new double[] {
-				Double.parseDouble(statSum.getModeAsString()),
-				Double.parseDouble(statSum.getMedianAsString()),
-				Double.parseDouble(statSum.getMinAsString()),
-				Double.parseDouble(statSum.getMaxAsString()) };
+					Double.parseDouble(statSum.getModeAsString()),
+					Double.parseDouble(statSum.getMedianAsString()),
+					Double.parseDouble(statSum.getMinAsString()),
+					Double.parseDouble(statSum.getMaxAsString()) };
+
 		} else {
-			
-			barSeriesDouble=new double[]{
-					
-			};
-			
+			barSeriesDouble = new double[] {
+					stringToDate(statSum.getModeAsString()),
+					stringToDate(statSum.getMedianAsString()),
+					stringToDate(statSum.getMinAsString()),
+					stringToDate(statSum.getMaxAsString()), };
+
+			barChart.getAxisSet().getYAxis(0).getTick().setVisible(false);
 		}
-			IBarSeries barSeries = (IBarSeries) barChart.getSeriesSet()
+		if (barSeriesDouble[0] < 0 || barSeriesDouble[1] < 0
+				|| barSeriesDouble[2] < 0 || barSeriesDouble[3] < 0) {
+			if (barSeriesDouble[0] <= barSeriesDouble[1]
+					&& barSeriesDouble[0] <= barSeriesDouble[2]
+					&& barSeriesDouble[0] <= barSeriesDouble[3]) {
+				System.out.println("0");
+				final double min = barSeriesDouble[0];
+				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
+				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
+				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
+				barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
+			}
+			if (barSeriesDouble[1] <= barSeriesDouble[0]
+					&& barSeriesDouble[1] <= barSeriesDouble[2]
+					&& barSeriesDouble[1] <= barSeriesDouble[3]) {
+				System.out.println("1");
+				final double min = barSeriesDouble[1];
+				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
+				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
+				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
+				barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
+			}
+			if (barSeriesDouble[2] <= barSeriesDouble[0]
+					&& barSeriesDouble[2] <= barSeriesDouble[1]
+					&& barSeriesDouble[2] <= barSeriesDouble[3]) {
+				System.out.println("2");
+				final double min = barSeriesDouble[2];
+				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
+				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
+				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
+				barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
+			}
+			if (barSeriesDouble[3] <= barSeriesDouble[0]
+					&& barSeriesDouble[3] <= barSeriesDouble[1]
+					&& barSeriesDouble[3] <= barSeriesDouble[2]) {
+				System.out.println("3");
+				final double min = barSeriesDouble[3];
+				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
+				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
+				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
+				barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
+			}
+
+		}
+
+		IBarSeries barSeries = (IBarSeries) barChart.getSeriesSet()
 				.createSeries(SeriesType.BAR, attribute);
-			barSeries.setBarColor(new Color(Display.getDefault(), 80, 240, 180));
-			barSeries.setYSeries(barSeriesDouble);
+		barSeries.setBarColor(new Color(Display.getDefault(), 80, 240, 180));
+		barSeries.setYSeries(barSeriesDouble);
 
-			IAxis xAxis = barChart.getAxisSet().getXAxis(0);
-			xAxis.setCategorySeries(new String[] { "Mode", "Median", "Minimum", "Maximum" });
-			xAxis.enableCategory(true);
+		IAxis xAxis = barChart.getAxisSet().getXAxis(0);
+		if (dataType == DataType.DATE) {
+			xAxis.setCategorySeries(new String[] {
+					"Mode: " + statSum.getModeAsString(),
+					"Median: " + statSum.getMedianAsString(),
+					"Minimum: " + statSum.getMinAsString(),
+					"Maximum: " + statSum.getMaxAsString() });
+		} else {
+			xAxis.setCategorySeries(new String[] { "Mode", "Median", "Minimum",
+					"Maximum" });
+		}
 
-			ISeriesLabel valueLabel = barSeries.getLabel();
-			valueLabel.setFormat("######.######");
+		xAxis.enableCategory(true);
+
+		ISeriesLabel valueLabel = barSeries.getLabel();
+		valueLabel.setFormat("######.######");
+		if (dataType == DataType.DATE) {
+			valueLabel.setVisible(false);
+		} else {
 			valueLabel.setVisible(true);
+		}
 
-			barChart.getAxisSet().adjustRange();
-			
+		barChart.getAxisSet().adjustRange();
 
+	}
+
+	public Double stringToDate(String dateString) {
+		final DateFormat format = new SimpleDateFormat("DD.MM.YYYY");
+		Date d = null;
+		try {
+			d = format.parse(dateString);
+		} catch (ParseException e) {
+		}
+
+		return ((double) d.getTime());
 	}
 
 }

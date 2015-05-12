@@ -35,22 +35,20 @@ public class Test extends Example {
 		StatisticsSummary<?> statSum = dataH.getStatistics()
 				.getSummaryStatistics(true).get("String");
 
-		statSum = dataH.getStatistics().getSummaryStatistics(true)
-				.get("String");
-		barSeries.displayData(statSum, "String", dataH);
-
-		statSum = dataH.getStatistics().getSummaryStatistics(true)
-				.get("OrderedString");
-		barSeries.displayData(statSum, "OrderedString", dataH);
-
-		statSum = dataH.getStatistics().getSummaryStatistics(true)
-				.get("integer");
-		barSeries.displayData(statSum, "integer", dataH);
-
-		statSum = dataH.getStatistics().getSummaryStatistics(true)
-				.get("decimal");
-		barSeries.displayData(statSum, "decimal", dataH);
-
+		/*
+		 * statSum = dataH.getStatistics().getSummaryStatistics(true)
+		 * .get("String"); barSeries.displayData(statSum, "String", dataH);
+		 * 
+		 * statSum = dataH.getStatistics().getSummaryStatistics(true)
+		 * .get("OrderedString"); barSeries.displayData(statSum,
+		 * "OrderedString", dataH);
+		 * 
+		 * statSum = dataH.getStatistics().getSummaryStatistics(true)
+		 * .get("integer"); barSeries.displayData(statSum, "integer", dataH);
+		 * 
+		 * statSum = dataH.getStatistics().getSummaryStatistics(true)
+		 * .get("decimal"); barSeries.displayData(statSum, "decimal", dataH);
+		 */
 		statSum = dataH.getStatistics().getSummaryStatistics(true).get("date");
 		barSeries.displayData(statSum, "date", dataH);
 
