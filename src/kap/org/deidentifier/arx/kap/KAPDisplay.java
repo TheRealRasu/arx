@@ -29,6 +29,7 @@ public class KAPDisplay {
 	private Button choice1;
 	private Button choice2;
 	private Button choice3;
+	private Button next;
 
 	private Label attLabel1;
 	private Label attLabel2;
@@ -56,67 +57,80 @@ public class KAPDisplay {
 	private Label stdDevLabel2;
 	private Label geoMeanLabel1;
 	private Label geoMeanLabel2;
+	
+	private double min;
+	private StatisticsSummary<?> statSum;
+	private String attribute;
+	private DataType<?> attType;
 
 	private boolean barSeriesClicked = false;
 	private boolean boxPlotClicked = false;
-
+	private boolean string=false;
+	private boolean orderedString=false;
+	private boolean integer=false;
+	private boolean decimal=false;
+	private boolean date=false;
+	
 	private double[] barSeriesDouble;
+	
 
-	public void displayData(final StatisticsSummary<?> statSum,
-			final String attribute, final DataHandle dataHandle) {
+	public void displayData(final String att, final DataHandle dataHandle) {
+		string=true;
+		
+		attribute=att;
+		statSum= dataHandle.getStatistics()
+				.getSummaryStatistics(true).get(attribute);
 		final Display display = new Display();
 
 		final Shell mainShell = new Shell(display);
 		final Shell textShell = new Shell(display);
 		final Shell barSeriesShell = new Shell(display);
 
-		final DataType<?> attType = dataHandle.getDefinition().getDataType(
+		barSeriesShell.setLayout(new FillLayout());
+
+		
+		attLabel1 = new Label(textShell, SWT.LEFT);
+		attLabel2 = new Label(textShell, SWT.LEFT);
+		scaleLabel1 = new Label(textShell, SWT.LEFT);
+		scaleLabel2 = new Label(textShell, SWT.LEFT);
+		modeLabel1 = new Label(textShell, SWT.LEFT);
+		modeLabel2 = new Label(textShell, SWT.LEFT);
+		medianLabel1 = new Label(textShell, SWT.LEFT);
+		medianLabel2 = new Label(textShell, SWT.LEFT);
+		maxLabel1 = new Label(textShell, SWT.LEFT);
+		maxLabel2 = new Label(textShell, SWT.LEFT);
+		minLabel1 = new Label(textShell, SWT.LEFT);
+		minLabel2 = new Label(textShell, SWT.LEFT);
+		meanLabel1 = new Label(textShell, SWT.LEFT);
+		meanLabel2 = new Label(textShell, SWT.LEFT);
+		rangeLabel1 = new Label(textShell, SWT.LEFT);
+		rangeLabel2 = new Label(textShell, SWT.LEFT);
+		kurtosisLabel1 = new Label(textShell, SWT.LEFT);
+		kurtosisLabel2 = new Label(textShell, SWT.LEFT);
+		samVarLabel1 = new Label(textShell, SWT.LEFT);
+		samVarLabel2 = new Label(textShell, SWT.LEFT);
+		popVarLabel1 = new Label(textShell, SWT.LEFT);
+		popVarLabel2 = new Label(textShell, SWT.LEFT);
+		stdDevLabel1 = new Label(textShell, SWT.LEFT);
+		stdDevLabel2 = new Label(textShell, SWT.LEFT);
+		geoMeanLabel1 = new Label(textShell, SWT.LEFT);
+		geoMeanLabel2 = new Label(textShell, SWT.LEFT);
+		
+		
+		
+		
+		
+
+		attType = dataHandle.getDefinition().getDataType(
 				attribute);
 
 		mainShell.setSize(400, 200);
-		textShell.setSize(400, 400);
+		textShell.setSize(550, 400);
 		barSeriesShell.setSize(800, 600);
 		mainShell.setText("Displaying the data of attribute " + attribute);
 		textShell.setText("Text shell");
 		barSeriesShell.setText("Bar series shell");
 
-		if (statSum.getScale() == ScaleOfMeasure.NOMINAL
-				|| statSum.getScale() == ScaleOfMeasure.ORDINAL) {
-
-			choice1 = new Button(mainShell, SWT.PUSH);
-
-			choice1.setText("Display values as text");
-			choice1.setBounds(10, 10, 150, 30);
-			choice1.addSelectionListener(new SelectionListener() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					attributeText(textShell, statSum, attribute, attType);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-			});
-
-		} else if (statSum.getScale() == ScaleOfMeasure.INTERVAL
-				|| statSum.getScale() == ScaleOfMeasure.RATIO) {
-
-			choice1 = new Button(mainShell, SWT.PUSH);
-
-			choice1.setText("Display values as text");
-			choice1.setBounds(10, 10, 150, 30);
-			choice1.addSelectionListener(new SelectionListener() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					attributeText(textShell, statSum, attribute, attType);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-			});
 
 			choice2 = new Button(mainShell, SWT.PUSH);
 
@@ -139,6 +153,7 @@ public class KAPDisplay {
 					widgetSelected(e);
 				}
 			});
+			choice2.setVisible(false);
 
 			choice3 = new Button(mainShell, SWT.PUSH);
 
@@ -150,7 +165,8 @@ public class KAPDisplay {
 					if (!barSeriesClicked) {
 						barSeries(barSeriesShell, statSum, attribute, attType);
 						barSeriesClicked = true;
-					}
+						}
+					
 
 				}
 
@@ -159,8 +175,94 @@ public class KAPDisplay {
 					widgetSelected(e);
 				}
 			});
+			choice3.setVisible(false);
+			
+			
+			
+			
 
-		}
+		
+		choice1 = new Button(mainShell, SWT.PUSH);
+
+		choice1.setText("Display values as text");
+		choice1.setBounds(10, 10, 150, 30);
+		choice1.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					attributeText(textShell, statSum, attribute, attType);
+				}
+			
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+		
+		
+		
+		next=new Button(mainShell, SWT.PUSH);
+		
+		next.setText("Next Attribute");
+		next.setBounds(160, 40, 120, 30);
+		next.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(string){
+					attribute="OrderedString";
+					statSum= dataHandle.getStatistics()
+							.getSummaryStatistics(true).get(attribute);
+					attType=dataHandle.getDefinition().getDataType(attribute);
+					mainShell.setText("Displaying the data of attribute " + attribute);
+					string=false;
+					orderedString=true;
+				} else if (orderedString){
+					attribute="integer";
+					statSum= dataHandle.getStatistics()
+							.getSummaryStatistics(true).get(attribute);
+					attType=dataHandle.getDefinition().getDataType(attribute);
+					mainShell.setText("Displaying the data of attribute " + attribute);
+					orderedString=false;
+					integer=true;
+					choice2.setVisible(true);
+					choice3.setVisible(true);
+					
+				} else if (integer){
+					attribute="decimal";
+					statSum= dataHandle.getStatistics()
+							.getSummaryStatistics(true).get(attribute);
+					attType=dataHandle.getDefinition().getDataType(attribute);
+					mainShell.setText("Displaying the data of attribute " + attribute);
+					integer=false;
+					decimal=true;
+				} else if (decimal){
+					attribute="date";
+					statSum= dataHandle.getStatistics()
+							.getSummaryStatistics(true).get(attribute);
+					attType=dataHandle.getDefinition().getDataType(attribute);
+					mainShell.setText("Displaying the data of attribute " + attribute);
+					decimal=false;
+					date=true;
+				} else if (date){
+					attribute="String";
+					statSum= dataHandle.getStatistics()
+							.getSummaryStatistics(true).get(attribute);
+					attType=dataHandle.getDefinition().getDataType(attribute);
+					mainShell.setText("Displaying the data of attribute " + attribute);
+					date=false;
+					string=true;
+					choice2.setVisible(false);
+					choice3.setVisible(false);
+				}
+				boxPlotClicked = false;
+				barSeriesClicked=false;
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
 
 		mainShell.open();
 		textShell.open();
@@ -177,120 +279,148 @@ public class KAPDisplay {
 	}
 
 	public void attributeText(Shell textShell, StatisticsSummary<?> statSum,
-			String attribute, DataType<?> attType) {
-
-		attLabel1 = new Label(textShell, SWT.LEFT);
-		attLabel2 = new Label(textShell, SWT.LEFT);
+			String attribute, DataType<?> attType) {	
+		attLabel1.setVisible(false);
+		attLabel2.setVisible(false);
+		scaleLabel1.setVisible(false);
+		scaleLabel2.setVisible(false);
+		modeLabel1.setVisible(false);
+		modeLabel2.setVisible(false);
+		medianLabel1.setVisible(false);
+		medianLabel2.setVisible(false);
+		maxLabel1.setVisible(false);
+		maxLabel2.setVisible(false);
+		minLabel1.setVisible(false);
+		minLabel2.setVisible(false);
+		meanLabel1.setVisible(false);
+		meanLabel2.setVisible(false);
+		rangeLabel1.setVisible(false);
+		rangeLabel2.setVisible(false);
+		kurtosisLabel1.setVisible(false);
+		kurtosisLabel2.setVisible(false);
+		samVarLabel1.setVisible(false);
+		samVarLabel2.setVisible(false);
+		popVarLabel1.setVisible(false);
+		popVarLabel2.setVisible(false);
+		stdDevLabel1.setVisible(false);
+		stdDevLabel2.setVisible(false);
+		geoMeanLabel1.setVisible(false);
+		geoMeanLabel2.setVisible(false);
+			
 		attLabel1.setBounds(10, 10, 160, 20);
 		attLabel2.setBounds(170, 10, 160, 20);
 		attLabel1.setText("Attribute:");
 		attLabel2.setText(attribute);
+		attLabel1.setVisible(true);
+		attLabel2.setVisible(true);
+		
 
-		scaleLabel1 = new Label(textShell, SWT.LEFT);
-		scaleLabel2 = new Label(textShell, SWT.LEFT);
 		scaleLabel1.setBounds(10, 30, 160, 20);
 		scaleLabel2.setBounds(170, 30, 160, 20);
 		scaleLabel1.setText("Scale Of Measure");
 		scaleLabel2.setText(statSum.getScale().toString());
-
-		modeLabel1 = new Label(textShell, SWT.LEFT);
-		modeLabel2 = new Label(textShell, SWT.LEFT);
+		scaleLabel1.setVisible(true);
+		scaleLabel2.setVisible(true);
+		
 		modeLabel1.setText("Mode:");
 		modeLabel2.setText(statSum.getModeAsString());
 		modeLabel1.setBounds(10, 50, 160, 20);
 		modeLabel2.setBounds(170, 50, 160, 20);
-
+		modeLabel1.setVisible(true);
+		modeLabel2.setVisible(true);
+		
+		
 		if (statSum.getScale() != ScaleOfMeasure.NOMINAL) {
 
-			medianLabel1 = new Label(textShell, SWT.LEFT);
-			medianLabel2 = new Label(textShell, SWT.LEFT);
 			medianLabel1.setText("Median:");
 			medianLabel2.setText(statSum.getMedianAsString());
 			medianLabel1.setBounds(10, 70, 160, 20);
 			medianLabel2.setBounds(170, 70, 160, 20);
-
-			maxLabel1 = new Label(textShell, SWT.LEFT);
-			maxLabel2 = new Label(textShell, SWT.LEFT);
+			medianLabel1.setVisible(true);
+			medianLabel2.setVisible(true);
+			
 			maxLabel1.setText("Maximum:");
 			maxLabel2.setText(statSum.getMaxAsString());
 			maxLabel1.setBounds(10, 90, 160, 20);
 			maxLabel2.setBounds(170, 90, 160, 20);
-
-			minLabel1 = new Label(textShell, SWT.LEFT);
-			minLabel2 = new Label(textShell, SWT.LEFT);
+			maxLabel1.setVisible(true);
+			maxLabel2.setVisible(true);
+			
 			minLabel1.setText("Minimum:");
 			minLabel2.setText(statSum.getMinAsString());
 			minLabel1.setBounds(10, 110, 160, 20);
 			minLabel2.setBounds(170, 110, 160, 20);
-
+			minLabel1.setVisible(true);
+			minLabel2.setVisible(true);
+			
 		}
 
 		if (statSum.getScale() == ScaleOfMeasure.INTERVAL
 				|| statSum.getScale() == ScaleOfMeasure.RATIO) {
 
-			meanLabel1 = new Label(textShell, SWT.LEFT);
-			meanLabel2 = new Label(textShell, SWT.LEFT);
 			meanLabel1.setText("Arithmetic mean:");
 			meanLabel2.setText(statSum.getArithmeticMeanAsString());
 			meanLabel1.setBounds(10, 130, 160, 20);
 			meanLabel2.setBounds(170, 130, 160, 20);
-
-			rangeLabel1 = new Label(textShell, SWT.LEFT);
-			rangeLabel2 = new Label(textShell, SWT.LEFT);
+			meanLabel1.setVisible(true);
+			meanLabel2.setVisible(true);
+			
 			rangeLabel1.setText("range:");
 			rangeLabel2.setText(statSum.getRangeAsString());
 			rangeLabel1.setBounds(10, 150, 160, 20);
 			rangeLabel2.setBounds(170, 150, 160, 20);
-
-			kurtosisLabel1 = new Label(textShell, SWT.LEFT);
-			kurtosisLabel2 = new Label(textShell, SWT.LEFT);
+			rangeLabel1.setVisible(true);
+			rangeLabel2.setVisible(true);
+			
+			
 			kurtosisLabel1.setText("kurtosis:");
 			kurtosisLabel2.setText(statSum.getKurtosisAsString());
 			kurtosisLabel1.setBounds(10, 170, 160, 20);
 			kurtosisLabel2.setBounds(170, 170, 160, 20);
-
-			samVarLabel1 = new Label(textShell, SWT.LEFT);
-			samVarLabel2 = new Label(textShell, SWT.LEFT);
+			kurtosisLabel1.setVisible(true);
+			kurtosisLabel2.setVisible(true);
+			
 			samVarLabel1.setText("sample variance:");
 			samVarLabel2.setText(statSum.getSampleVarianceAsString());
 			samVarLabel1.setBounds(10, 190, 160, 20);
-			samVarLabel2.setBounds(170, 190, 160, 20);
-
-			popVarLabel1 = new Label(textShell, SWT.LEFT);
-			popVarLabel2 = new Label(textShell, SWT.LEFT);
+			samVarLabel2.setBounds(170, 190, 500, 20);
+			samVarLabel1.setVisible(true);
+			samVarLabel2.setVisible(true);
+			
 			popVarLabel1.setText("population variance:");
 			popVarLabel2.setText(statSum.getPopulationVarianceAsString());
 			popVarLabel1.setBounds(10, 210, 160, 20);
-			popVarLabel2.setBounds(170, 210, 160, 20);
-
-			stdDevLabel1 = new Label(textShell, SWT.LEFT);
-			stdDevLabel2 = new Label(textShell, SWT.LEFT);
+			popVarLabel2.setBounds(170, 210, 500, 20);
+			popVarLabel1.setVisible(true);
+			popVarLabel2.setVisible(true);
+			
 			stdDevLabel1.setText("standard deviance:");
 			stdDevLabel2.setText(statSum.getStdDevAsString());
 			stdDevLabel1.setBounds(10, 230, 160, 20);
-			stdDevLabel2.setBounds(170, 230, 160, 20);
-
+			stdDevLabel2.setBounds(170, 230, 200, 20);
+			stdDevLabel1.setVisible(true);
+			stdDevLabel2.setVisible(true);
+			
 		}
 
 		if (statSum.getScale() == ScaleOfMeasure.RATIO) {
 
-			geoMeanLabel1 = new Label(textShell, SWT.LEFT);
-			geoMeanLabel2 = new Label(textShell, SWT.LEFT);
 			geoMeanLabel1.setText("geometric mean:");
 			geoMeanLabel2.setText(statSum.getGeometricMeanAsString());
 			geoMeanLabel1.setBounds(10, 250, 160, 20);
 			geoMeanLabel2.setBounds(170, 250, 160, 20);
-
+			geoMeanLabel1.setVisible(true);
+			geoMeanLabel2.setVisible(true);
+				
 		}
 
 	}
 
-	public void barSeries(Shell barShell, StatisticsSummary<?> statSum,
-			String attribute, DataType<?> dataType) {
+	public void barSeries(Shell barShell, StatisticsSummary<?> statSum, String attribute, DataType<?> dataType) {
 
-		barShell.setLayout(new FillLayout());
 
-		Chart barChart = new Chart(barShell, SWT.NONE);
+
+		final Chart barChart = new Chart(barShell, SWT.NONE);
 
 		barChart.getAxisSet().getXAxis(0).getTitle().setVisible(false);
 		barChart.getAxisSet().getYAxis(0).getTitle().setVisible(false);
@@ -322,7 +452,7 @@ public class KAPDisplay {
 					&& barSeriesDouble[0] <= barSeriesDouble[2]
 					&& barSeriesDouble[0] <= barSeriesDouble[3]) {
 				System.out.println("0");
-				final double min = barSeriesDouble[0];
+				min = barSeriesDouble[0];
 				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
 				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
 				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
@@ -332,7 +462,7 @@ public class KAPDisplay {
 					&& barSeriesDouble[1] <= barSeriesDouble[2]
 					&& barSeriesDouble[1] <= barSeriesDouble[3]) {
 				System.out.println("1");
-				final double min = barSeriesDouble[1];
+				min = barSeriesDouble[1];
 				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
 				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
 				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
@@ -342,7 +472,7 @@ public class KAPDisplay {
 					&& barSeriesDouble[2] <= barSeriesDouble[1]
 					&& barSeriesDouble[2] <= barSeriesDouble[3]) {
 				System.out.println("2");
-				final double min = barSeriesDouble[2];
+				min = barSeriesDouble[2];
 				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
 				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
 				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
@@ -352,7 +482,7 @@ public class KAPDisplay {
 					&& barSeriesDouble[3] <= barSeriesDouble[1]
 					&& barSeriesDouble[3] <= barSeriesDouble[2]) {
 				System.out.println("3");
-				final double min = barSeriesDouble[3];
+				min = barSeriesDouble[3];
 				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
 				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
 				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;

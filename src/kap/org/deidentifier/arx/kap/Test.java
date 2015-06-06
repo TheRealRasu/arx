@@ -4,7 +4,6 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.aggregates.StatisticsSummary;
 import org.deidentifier.arx.examples.Example;
 
 public class Test extends Example {
@@ -32,26 +31,9 @@ public class Test extends Example {
 		KAPDisplay barSeries = new KAPDisplay();
 		DataHandle dataH = data.getHandle();
 
-		StatisticsSummary<?> statSum = dataH.getStatistics()
-				.getSummaryStatistics(true).get("String");
 
-		/*
-		 * statSum = dataH.getStatistics().getSummaryStatistics(true)
-		 * .get("String"); barSeries.displayData(statSum, "String", dataH);
-		 * 
-		 * statSum = dataH.getStatistics().getSummaryStatistics(true)
-		 * .get("OrderedString"); barSeries.displayData(statSum,
-		 * "OrderedString", dataH);
-		 * 
-		 * statSum = dataH.getStatistics().getSummaryStatistics(true)
-		 * .get("integer"); barSeries.displayData(statSum, "integer", dataH);
-		 * 
-		 * statSum = dataH.getStatistics().getSummaryStatistics(true)
-		 * .get("decimal"); barSeries.displayData(statSum, "decimal", dataH);
-		 */
-		statSum = dataH.getStatistics().getSummaryStatistics(true).get("date");
-		barSeries.displayData(statSum, "date", dataH);
-
+		
+		 barSeries.displayData("String", dataH);
 	}
 
 }
