@@ -58,6 +58,7 @@ public class KAPDisplay {
 	private Label geoMeanLabel1;
 	private Label geoMeanLabel2;
 	
+	private Shell barSeriesShell;
 	private double min;
 	private StatisticsSummary<?> statSum;
 	private String attribute;
@@ -84,11 +85,9 @@ public class KAPDisplay {
 
 		final Shell mainShell = new Shell(display);
 		final Shell textShell = new Shell(display);
-		final Shell barSeriesShell = new Shell(display);
-
-		barSeriesShell.setLayout(new FillLayout());
-
+		barSeriesShell = new Shell(display);
 		
+
 		attLabel1 = new Label(textShell, SWT.LEFT);
 		attLabel2 = new Label(textShell, SWT.LEFT);
 		scaleLabel1 = new Label(textShell, SWT.LEFT);
@@ -163,6 +162,12 @@ public class KAPDisplay {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (!barSeriesClicked) {
+						barSeriesShell.dispose();
+						barSeriesShell=new Shell(display);
+						barSeriesShell.setText("Bar Series shell");
+						barSeriesShell.setSize(800, 600);
+						barSeriesShell.setLayout(new FillLayout());
+						barSeriesShell.open();
 						barSeries(barSeriesShell, statSum, attribute, attType);
 						barSeriesClicked = true;
 						}
@@ -451,7 +456,6 @@ public class KAPDisplay {
 			if (barSeriesDouble[0] <= barSeriesDouble[1]
 					&& barSeriesDouble[0] <= barSeriesDouble[2]
 					&& barSeriesDouble[0] <= barSeriesDouble[3]) {
-				System.out.println("0");
 				min = barSeriesDouble[0];
 				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
 				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
@@ -461,7 +465,6 @@ public class KAPDisplay {
 			if (barSeriesDouble[1] <= barSeriesDouble[0]
 					&& barSeriesDouble[1] <= barSeriesDouble[2]
 					&& barSeriesDouble[1] <= barSeriesDouble[3]) {
-				System.out.println("1");
 				min = barSeriesDouble[1];
 				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
 				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
@@ -471,7 +474,6 @@ public class KAPDisplay {
 			if (barSeriesDouble[2] <= barSeriesDouble[0]
 					&& barSeriesDouble[2] <= barSeriesDouble[1]
 					&& barSeriesDouble[2] <= barSeriesDouble[3]) {
-				System.out.println("2");
 				min = barSeriesDouble[2];
 				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
 				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
@@ -481,7 +483,6 @@ public class KAPDisplay {
 			if (barSeriesDouble[3] <= barSeriesDouble[0]
 					&& barSeriesDouble[3] <= barSeriesDouble[1]
 					&& barSeriesDouble[3] <= barSeriesDouble[2]) {
-				System.out.println("3");
 				min = barSeriesDouble[3];
 				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
 				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
@@ -519,6 +520,7 @@ public class KAPDisplay {
 		}
 
 		barChart.getAxisSet().adjustRange();
+		barShell.setLayout(new FillLayout());
 
 	}
 

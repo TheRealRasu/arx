@@ -30,10 +30,10 @@ public class Test extends Example {
 
 		KAPDisplay barSeries = new KAPDisplay();
 		DataHandle dataH = data.getHandle();
-
-
 		
-		 barSeries.displayData("String", dataH);
+		barSeries.displayData("String", dataH);
+
+	
 	}
 
 }
