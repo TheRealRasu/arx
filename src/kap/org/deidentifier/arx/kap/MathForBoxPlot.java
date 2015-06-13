@@ -1,3 +1,9 @@
+/*
+ * The class which copies all values from the database into an ArrayList of the type Double. 
+ * 
+ * @author Mario Antón
+ */
+
 package org.deidentifier.arx.kap;
 
 import java.util.ArrayList;
@@ -5,11 +11,17 @@ import java.util.Date;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.ARXOrderedString;
-import org.deidentifier.arx.aggregates.StatisticsSummary.ScaleOfMeasure;
 
 public class MathForBoxPlot {
-
+	/*
+	 * This method returns an ArrayList of the type double
+	 * 
+	 * @param dataHandle
+	 * 
+	 * @param attribute
+	 * 
+	 * @return
+	 */
 	public ArrayList<Double> GetAttributeValuesList(DataHandle dataHandle,
 			String attribute) {
 
@@ -24,29 +36,14 @@ public class MathForBoxPlot {
 					"the given attribute is not present in the data set.");
 
 		}
-
+		// The DataType is saved in order to determine the correct parsing
 		final DataType<?> type = dataHandle.getDataType(attribute);
-		final Class<?> clazz = type.getDescription().getWrappedClass();
-
-		ScaleOfMeasure scale = ScaleOfMeasure.NOMINAL;
-		if (clazz == Long.class || clazz == Double.class) {
-			scale = ScaleOfMeasure.RATIO;
-		} else if (clazz == Date.class) {
-			scale = ScaleOfMeasure.INTERVAL;
-		} else if (type instanceof ARXOrderedString) {
-			scale = ScaleOfMeasure.ORDINAL;
-		}
-
-		if (scale == ScaleOfMeasure.NOMINAL || scale == ScaleOfMeasure.ORDINAL) {
-			throw new IllegalArgumentException(
-					"This scale cannot be displayed with a Box-Plot");
-		}
 
 		String[] values = new String[rowAmount];
 		for (int i = 0; i < rowAmount; i++) {
 			values[i] = dataHandle.getValue(i, attLocation);
 		}
-
+		// The database is checked for NULL values
 		for (int rA = 0; rA < rowAmount; rA++) {
 			for (int cA = 0; cA < columnAmount; cA++) {
 				if (DataType.isNull(dataHandle.getValue(rA, cA))) {
@@ -60,6 +57,8 @@ public class MathForBoxPlot {
 
 		final ArrayList<Double> valueList = new ArrayList<Double>();
 
+		// If the database contains NULL values, they are skipped and not added
+		// to the ArrayList
 		for (int i = 0; i < rowAmount; i++) {
 			if (!isNull[i]) {
 

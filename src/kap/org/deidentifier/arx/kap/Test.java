@@ -1,3 +1,9 @@
+/*
+ * The test class for this project. 
+ * 
+ * @author Mario Antón
+ */
+
 package org.deidentifier.arx.kap;
 
 import org.deidentifier.arx.Data;
@@ -8,7 +14,19 @@ import org.deidentifier.arx.examples.Example;
 
 public class Test extends Example {
 
+	/*
+	 * Main Method
+	 * 
+	 * @param args
+	 */
+
 	public static void main(String[] args) {
+
+		/*
+		 * After creating a sample database, the method
+		 * "displayData(DataHandle)" in the class KAPDisplay is executed.
+		 */
+
 		final DefaultData data = Data.create();
 
 		data.add("date", "integer", "String", "OrderedString", "decimal");
@@ -30,10 +48,9 @@ public class Test extends Example {
 
 		KAPDisplay barSeries = new KAPDisplay();
 		DataHandle dataH = data.getHandle();
-		
-		barSeries.displayData("String", dataH);
 
-	
+		barSeries.displayData(dataH);
+
 	}
 
 }
