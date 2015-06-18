@@ -112,7 +112,7 @@ public class BoxPlotJFreeChart {
 
 		JFrame frame = new JFrame();
 		JScrollPane scrollPane = new JScrollPane(chartPanel);
-		scrollPane.setPreferredSize(new Dimension(800, 700));
+		scrollPane.setPreferredSize(new Dimension(600, 700));
 		scrollPane
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 

@@ -64,8 +64,8 @@ public class KAPDisplay {
 	private Label stdDevLabel2;
 	private Label geoMeanLabel1;
 	private Label geoMeanLabel2;
-
-	private Shell barSeriesShell;
+	
+	private Chart chart;
 
 	private double min;
 
@@ -102,17 +102,20 @@ public class KAPDisplay {
 		attType = dataHandle.getDefinition().getDataType(attribute);
 
 		final Display display = new Display();
-
+		
 		final Shell mainShell = new Shell(display);
 		final Shell textShell = new Shell(display);
-		barSeriesShell = new Shell(display);
-
+		final Shell barSeriesShell = new Shell(display);
+		chart=new Chart (barSeriesShell, SWT.NONE);
+		chart.setLayout(new FillLayout());
+		
 		mainShell.setSize(400, 200);
 		mainShell.setText("Displaying the data of attribute " + attribute);
 		textShell.setSize(550, 400);
 		textShell.setText("Text shell");
 		barSeriesShell.setSize(800, 600);
 		barSeriesShell.setText("Bar series shell");
+		barSeriesShell.setLayout(new FillLayout());
 
 		// creating all the needed text labels
 		attLabel1 = new Label(textShell, SWT.LEFT);
@@ -185,13 +188,9 @@ public class KAPDisplay {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!barSeriesClicked) {
-					barSeriesShell.dispose();
-					barSeriesShell = new Shell(display);
-					barSeriesShell.setText("Bar Series shell");
-					barSeriesShell.setSize(800, 600);
+					chart.dispose();
+					chart=barSeries(chart, barSeriesShell, statSum, attribute, attType);
 					barSeriesShell.setLayout(new FillLayout());
-					barSeriesShell.open();
-					barSeries(barSeriesShell, statSum, attribute, attType);
 					barSeriesClicked = true;
 				}
 
@@ -293,6 +292,7 @@ public class KAPDisplay {
 				}
 				boxPlotClicked = false;
 				barSeriesClicked = false;
+				textClicked=false;
 			}
 
 			@Override
@@ -479,16 +479,17 @@ public class KAPDisplay {
 	 * @param attribute
 	 * 
 	 * @param dataType
+	 * 
+	 * @return
 	 */
-	public void barSeries(Shell barShell, StatisticsSummary<?> statSum,
+	public Chart barSeries(Chart chart, Shell barShell, StatisticsSummary<?> statSum,
 			String attribute, DataType<?> dataType) {
+		chart = new Chart(barShell, SWT.NONE);
 
-		final Chart barChart = new Chart(barShell, SWT.NONE);
+		chart.getAxisSet().getXAxis(0).getTitle().setVisible(false);
+		chart.getAxisSet().getYAxis(0).getTitle().setVisible(false);
 
-		barChart.getAxisSet().getXAxis(0).getTitle().setVisible(false);
-		barChart.getAxisSet().getYAxis(0).getTitle().setVisible(false);
-
-		barChart.getTitle().setText(
+		chart.getTitle().setText(
 				"Displaying the Mode, Median, Minimum and Maximum of the attribute "
 						+ attribute);
 
@@ -509,7 +510,7 @@ public class KAPDisplay {
 					stringToDate(statSum.getMinAsString()),
 					stringToDate(statSum.getMaxAsString()), };
 
-			barChart.getAxisSet().getYAxis(0).getTick().setVisible(false);
+			chart.getAxisSet().getYAxis(0).getTick().setVisible(false);
 		}
 
 		/*
@@ -558,12 +559,12 @@ public class KAPDisplay {
 
 		}
 
-		IBarSeries barSeries = (IBarSeries) barChart.getSeriesSet()
+		IBarSeries barSeries = (IBarSeries) chart.getSeriesSet()
 				.createSeries(SeriesType.BAR, attribute);
 		barSeries.setBarColor(new Color(Display.getDefault(), 80, 240, 180));
 		barSeries.setYSeries(barSeriesDouble);
 
-		IAxis xAxis = barChart.getAxisSet().getXAxis(0);
+		IAxis xAxis = chart.getAxisSet().getXAxis(0);
 		if (dataType == DataType.DATE) {
 			xAxis.setCategorySeries(new String[] {
 					"Mode: " + statSum.getModeAsString(),
@@ -585,9 +586,9 @@ public class KAPDisplay {
 			valueLabel.setVisible(true);
 		}
 
-		barChart.getAxisSet().adjustRange();
-		barShell.setLayout(new FillLayout());
-
+		chart.getAxisSet().adjustRange();
+		return chart;
+		
 	}
 
 	/*
