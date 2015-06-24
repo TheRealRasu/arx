@@ -32,7 +32,7 @@ public class Test extends Example {
 		data.add("date", "integer", "String", "OrderedString", "decimal");
 		data.add("01.01.1982", "45", "female", "3", "0.152");
 		data.add("07.04.1924", "45", "male", "2", "0.126");
-		data.add("06.11.1956", "50", "male", "1", "0.158");
+		data.add("06.11.1956", "50", "male", "1", "-0.158");
 		data.add("28.02.1984", "67", "female", "0", "0.126");
 		data.add("30.06.1975", "30", "female", "2", "0.987");
 		data.add("01.01.1982", "20", "male", "3", "0.346");

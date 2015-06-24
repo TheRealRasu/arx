@@ -516,47 +516,52 @@ public class KAPDisplay {
 		/*
 		 * The following passage determines whether one of the 4 values is below
 		 * zero. If this is the case, all 4 values are increased so that the bar
-		 * series will only have positive values.
+		 * series will only have positive values. This passage only applies to the 
+		 * DataType "date", as there are no negative values of a date.
 		 */
-		if (barSeriesDouble[0] < 0 || barSeriesDouble[1] < 0
+		if(dataType==DataType.DATE){
+			
+		
+			if (barSeriesDouble[0] < 0 || barSeriesDouble[1] < 0
 				|| barSeriesDouble[2] < 0 || barSeriesDouble[3] < 0) {
-			if (barSeriesDouble[0] <= barSeriesDouble[1]
+				if (barSeriesDouble[0] <= barSeriesDouble[1]
 					&& barSeriesDouble[0] <= barSeriesDouble[2]
 					&& barSeriesDouble[0] <= barSeriesDouble[3]) {
-				min = barSeriesDouble[0];
-				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
-				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
-				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
-				barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
-			}
-			if (barSeriesDouble[1] <= barSeriesDouble[0]
+					min = barSeriesDouble[0];
+					barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
+					barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
+					barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
+					barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
+				}
+				if (barSeriesDouble[1] <= barSeriesDouble[0]
 					&& barSeriesDouble[1] <= barSeriesDouble[2]
 					&& barSeriesDouble[1] <= barSeriesDouble[3]) {
-				min = barSeriesDouble[1];
-				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
-				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
-				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
-				barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
-			}
-			if (barSeriesDouble[2] <= barSeriesDouble[0]
+					min = barSeriesDouble[1];
+					barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
+					barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
+					barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
+					barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
+				}
+				if (barSeriesDouble[2] <= barSeriesDouble[0]
 					&& barSeriesDouble[2] <= barSeriesDouble[1]
 					&& barSeriesDouble[2] <= barSeriesDouble[3]) {
-				min = barSeriesDouble[2];
-				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
-				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
-				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
-				barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
-			}
-			if (barSeriesDouble[3] <= barSeriesDouble[0]
+					min = barSeriesDouble[2];
+					barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
+					barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
+					barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
+					barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
+				}
+				if (barSeriesDouble[3] <= barSeriesDouble[0]
 					&& barSeriesDouble[3] <= barSeriesDouble[1]
 					&& barSeriesDouble[3] <= barSeriesDouble[2]) {
-				min = barSeriesDouble[3];
-				barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
-				barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
-				barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
-				barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
-			}
+					min = barSeriesDouble[3];
+					barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
+					barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
+					barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
+					barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
+				}
 
+			}
 		}
 
 		IBarSeries barSeries = (IBarSeries) chart.getSeriesSet()
