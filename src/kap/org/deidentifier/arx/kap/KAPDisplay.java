@@ -109,7 +109,7 @@ public class KAPDisplay {
 
 		mainShell.setSize(400, 200);
 		mainShell.setText("Displaying the data of attribute " + attribute);
-		textShell.setSize(550, 400);
+		textShell.setSize(550, 315);
 		textShell.setText("Text shell");
 		barSeriesShell.setSize(800, 600);
 		barSeriesShell.setText("Bar series shell");
