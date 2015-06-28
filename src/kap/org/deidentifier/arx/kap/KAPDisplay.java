@@ -513,10 +513,8 @@ public class KAPDisplay {
 		}
 
 		/*
-		 * The following passage determines whether one of the 4 values is below
-		 * zero. If this is the case, all 4 values are increased so that the bar
-		 * series will only have positive values. This passage only applies to
-		 * the DataType "date", as there are no negative values of a date.
+		 * The following passage alters the definite zero of the DataType date and sets it
+		 * to the 1st of January of the year 0 AD.
 		 */
 		if (dataType == DataType.DATE) {
 			barSeriesDouble[0] = barSeriesDouble[0] + (1970 * 31536000000L);
