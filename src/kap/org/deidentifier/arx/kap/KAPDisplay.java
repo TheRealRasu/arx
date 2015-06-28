@@ -357,7 +357,7 @@ public class KAPDisplay {
 
 		attLabel1.setBounds(10, 10, 160, 20);
 		attLabel2.setBounds(170, 10, 160, 20);
-		attLabel1.setText("Attribute:");
+		attLabel1.setText("Attribute name:");
 		attLabel2.setText(attribute);
 		attLabel1.setVisible(true);
 		attLabel2.setVisible(true);
@@ -417,35 +417,35 @@ public class KAPDisplay {
 			meanLabel1.setVisible(true);
 			meanLabel2.setVisible(true);
 
-			rangeLabel1.setText("range:");
+			rangeLabel1.setText("Range:");
 			rangeLabel2.setText(statSum.getRangeAsString());
 			rangeLabel1.setBounds(10, 150, 160, 20);
 			rangeLabel2.setBounds(170, 150, 160, 20);
 			rangeLabel1.setVisible(true);
 			rangeLabel2.setVisible(true);
 
-			kurtosisLabel1.setText("kurtosis:");
+			kurtosisLabel1.setText("Kurtosis:");
 			kurtosisLabel2.setText(statSum.getKurtosisAsString());
 			kurtosisLabel1.setBounds(10, 170, 160, 20);
 			kurtosisLabel2.setBounds(170, 170, 160, 20);
 			kurtosisLabel1.setVisible(true);
 			kurtosisLabel2.setVisible(true);
 
-			samVarLabel1.setText("sample variance:");
+			samVarLabel1.setText("Sample variance:");
 			samVarLabel2.setText(statSum.getSampleVarianceAsString());
 			samVarLabel1.setBounds(10, 190, 160, 20);
 			samVarLabel2.setBounds(170, 190, 500, 20);
 			samVarLabel1.setVisible(true);
 			samVarLabel2.setVisible(true);
 
-			popVarLabel1.setText("population variance:");
+			popVarLabel1.setText("Population variance:");
 			popVarLabel2.setText(statSum.getPopulationVarianceAsString());
 			popVarLabel1.setBounds(10, 210, 160, 20);
 			popVarLabel2.setBounds(170, 210, 500, 20);
 			popVarLabel1.setVisible(true);
 			popVarLabel2.setVisible(true);
 
-			stdDevLabel1.setText("standard deviance:");
+			stdDevLabel1.setText("Standard deviance:");
 			stdDevLabel2.setText(statSum.getStdDevAsString());
 			stdDevLabel1.setBounds(10, 230, 160, 20);
 			stdDevLabel2.setBounds(170, 230, 200, 20);
@@ -456,7 +456,7 @@ public class KAPDisplay {
 
 		if (statSum.getScale() == ScaleOfMeasure.RATIO) {
 
-			geoMeanLabel1.setText("geometric mean:");
+			geoMeanLabel1.setText("Geometric mean:");
 			geoMeanLabel2.setText(statSum.getGeometricMeanAsString());
 			geoMeanLabel1.setBounds(10, 250, 160, 20);
 			geoMeanLabel2.setBounds(170, 250, 160, 20);
