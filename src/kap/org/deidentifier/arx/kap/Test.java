@@ -37,7 +37,7 @@ public class Test extends Example {
 		data.add("30.06.1975", "30", "female", "2", "0.987");
 		data.add("01.01.1982", "20", "male", "3", "0.346");
 		data.add("05.10.1978", "69", "female", "0", "0.342");
-		data.add("02.08.1992", "24", "male", "3", "0.532");
+		data.add("01.01.0000", "24", "male", "3", "0.532");
 
 		data.getDefinition().setDataType("date", DataType.DATE);
 		data.getDefinition().setDataType("integer", DataType.INTEGER);

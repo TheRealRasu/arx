@@ -64,10 +64,8 @@ public class KAPDisplay {
 	private Label stdDevLabel2;
 	private Label geoMeanLabel1;
 	private Label geoMeanLabel2;
-	
-	private Chart chart;
 
-	private double min;
+	private Chart chart;
 
 	private StatisticsSummary<?> statSum;
 
@@ -102,13 +100,13 @@ public class KAPDisplay {
 		attType = dataHandle.getDefinition().getDataType(attribute);
 
 		final Display display = new Display();
-		
+
 		final Shell mainShell = new Shell(display);
 		final Shell textShell = new Shell(display);
 		final Shell barSeriesShell = new Shell(display);
-		chart=new Chart (barSeriesShell, SWT.NONE);
+		chart = new Chart(barSeriesShell, SWT.NONE);
 		chart.setLayout(new FillLayout());
-		
+
 		mainShell.setSize(400, 200);
 		mainShell.setText("Displaying the data of attribute " + attribute);
 		textShell.setSize(550, 400);
@@ -189,7 +187,8 @@ public class KAPDisplay {
 			public void widgetSelected(SelectionEvent e) {
 				if (!barSeriesClicked) {
 					chart.dispose();
-					chart=barSeries(chart, barSeriesShell, statSum, attribute, attType);
+					chart = barSeries(chart, barSeriesShell, statSum,
+							attribute, attType);
 					barSeriesShell.setLayout(new FillLayout());
 					barSeriesClicked = true;
 				}
@@ -292,7 +291,7 @@ public class KAPDisplay {
 				}
 				boxPlotClicked = false;
 				barSeriesClicked = false;
-				textClicked=false;
+				textClicked = false;
 			}
 
 			@Override
@@ -482,8 +481,8 @@ public class KAPDisplay {
 	 * 
 	 * @return
 	 */
-	public Chart barSeries(Chart chart, Shell barShell, StatisticsSummary<?> statSum,
-			String attribute, DataType<?> dataType) {
+	public Chart barSeries(Chart chart, Shell barShell,
+			StatisticsSummary<?> statSum, String attribute, DataType<?> dataType) {
 		chart = new Chart(barShell, SWT.NONE);
 
 		chart.getAxisSet().getXAxis(0).getTitle().setVisible(false);
@@ -516,56 +515,18 @@ public class KAPDisplay {
 		/*
 		 * The following passage determines whether one of the 4 values is below
 		 * zero. If this is the case, all 4 values are increased so that the bar
-		 * series will only have positive values. This passage only applies to the 
-		 * DataType "date", as there are no negative values of a date.
+		 * series will only have positive values. This passage only applies to
+		 * the DataType "date", as there are no negative values of a date.
 		 */
-		if(dataType==DataType.DATE){
-			
-		
-			if (barSeriesDouble[0] < 0 || barSeriesDouble[1] < 0
-				|| barSeriesDouble[2] < 0 || barSeriesDouble[3] < 0) {
-				if (barSeriesDouble[0] <= barSeriesDouble[1]
-					&& barSeriesDouble[0] <= barSeriesDouble[2]
-					&& barSeriesDouble[0] <= barSeriesDouble[3]) {
-					min = barSeriesDouble[0];
-					barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
-					barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
-					barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
-					barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
-				}
-				if (barSeriesDouble[1] <= barSeriesDouble[0]
-					&& barSeriesDouble[1] <= barSeriesDouble[2]
-					&& barSeriesDouble[1] <= barSeriesDouble[3]) {
-					min = barSeriesDouble[1];
-					barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
-					barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
-					barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
-					barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
-				}
-				if (barSeriesDouble[2] <= barSeriesDouble[0]
-					&& barSeriesDouble[2] <= barSeriesDouble[1]
-					&& barSeriesDouble[2] <= barSeriesDouble[3]) {
-					min = barSeriesDouble[2];
-					barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
-					barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
-					barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
-					barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
-				}
-				if (barSeriesDouble[3] <= barSeriesDouble[0]
-					&& barSeriesDouble[3] <= barSeriesDouble[1]
-					&& barSeriesDouble[3] <= barSeriesDouble[2]) {
-					min = barSeriesDouble[3];
-					barSeriesDouble[0] = barSeriesDouble[0] - min * 2;
-					barSeriesDouble[1] = barSeriesDouble[1] - min * 2;
-					barSeriesDouble[2] = barSeriesDouble[2] - min * 2;
-					barSeriesDouble[3] = barSeriesDouble[3] - min * 2;
-				}
-
-			}
+		if (dataType == DataType.DATE) {
+			barSeriesDouble[0] = barSeriesDouble[0] + (1970 * 31536000000L);
+			barSeriesDouble[1] = barSeriesDouble[1] + (1970 * 31536000000L);
+			barSeriesDouble[2] = barSeriesDouble[2] + (1970 * 31536000000L);
+			barSeriesDouble[3] = barSeriesDouble[3] + (1970 * 31536000000L);
 		}
 
-		IBarSeries barSeries = (IBarSeries) chart.getSeriesSet()
-				.createSeries(SeriesType.BAR, attribute);
+		IBarSeries barSeries = (IBarSeries) chart.getSeriesSet().createSeries(
+				SeriesType.BAR, attribute);
 		barSeries.setBarColor(new Color(Display.getDefault(), 80, 240, 180));
 		barSeries.setYSeries(barSeriesDouble);
 
@@ -593,7 +554,7 @@ public class KAPDisplay {
 
 		chart.getAxisSet().adjustRange();
 		return chart;
-		
+
 	}
 
 	/*
