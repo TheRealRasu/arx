@@ -325,6 +325,25 @@ public class KAPDisplay {
 	 */
 	public void attributeText(Shell textShell, StatisticsSummary<?> statSum,
 			String attribute, DataType<?> attType) {
+		/*
+		 * The size of the textShell is adjusted, dependent on the DataType
+		 * of the attribute.
+		 */
+		
+		if(attType==DataType.STRING){
+			textShell.setSize(290, 120);
+		} else if(attType==DataType.ORDERED_STRING){
+			textShell.setSize(300, 180);
+		} else if(attType==DataType.INTEGER){
+			textShell.setSize(310, 315);
+		} else if(attType==DataType.DECIMAL){
+			textShell.setSize(310, 315);	
+		} else if(attType==DataType.DATE){
+			textShell.setSize(540, 295);
+		}
+					
+
+		if(attType==DataType.DATE)
 
 		// All labels are set to invisible at the start of the method, as not
 		// every attribute displays all labels.
@@ -409,7 +428,6 @@ public class KAPDisplay {
 
 		if (statSum.getScale() == ScaleOfMeasure.INTERVAL
 				|| statSum.getScale() == ScaleOfMeasure.RATIO) {
-
 			meanLabel1.setText("Arithmetic mean:");
 			meanLabel2.setText(statSum.getArithmeticMeanAsString());
 			meanLabel1.setBounds(10, 130, 160, 20);
