@@ -383,7 +383,7 @@ public class KAPDisplay {
 
 		scaleLabel1.setBounds(10, 30, 160, 20);
 		scaleLabel2.setBounds(170, 30, 160, 20);
-		scaleLabel1.setText("Scale Of Measure");
+		scaleLabel1.setText("Scale of measure");
 		scaleLabel2.setText(statSum.getScale().toString());
 		scaleLabel1.setVisible(true);
 		scaleLabel2.setVisible(true);
